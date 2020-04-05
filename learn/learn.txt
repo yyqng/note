@@ -1,0 +1,2 @@
+
+webbench->tinyhttpd->libenvent->memcached->mysql->Linux内核->jvm虚拟机->android实现

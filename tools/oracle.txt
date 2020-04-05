@@ -1,0 +1,72 @@
+win10 oracle:
+    lsnrctl start
+    net start OracleServiceORCL
+    lsnrctl stop
+    net stop OracleServiceORCL
+安装plsql,windows 版oracle,配置note/conf/tnsnames.ora
+    C:\app\yuyq\product\11.2.0\dbhome_1\NETWORK\ADMIN\tnsnames.ora
+oracle home:
+    C:\app\yuyq\product\11.2.0\dbhome_1\bin\
+oci library
+    C:\app\yuyq\product\11.2.0\dbhome_1\bin\oci.dll
+安装教程：https://blog.csdn.net/doegoo/article/details/53020892
+    1、添加源
+        public-yum-ol6.repo
+    2、 下载资源:wget http://public-yum.oracle.com/RPM-GPG-KEY-oracle-ol7 -O /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+        用yum预处理环境：yum install oracle-rdbms-server-11gR2-preinstall
+    3、查看预处理结果：
+        cat /etc/passwd |grep oracle
+        cat /etc/group |grep dba 
+        cat /etc/group |grep oinstall
+    4、vi /etc/selinux/config，设置重启系统后不启动SELinux：
+        SELINUX=disabled;
+    5、关闭当前已开启的SELinux可使用如下命令：
+        setenforce 0
+    6、配置Oracle的.bashrc文件：
+        export ORACLE_BASE=/opt/oracle
+        export ORACLE_HOME=$ORACLE_BASE/product/11.2.0/db_1
+        export PATH=$PATH:$HOME/bin:$ORACLE_HOME/bin
+        export ROACLE_PID=ora11g
+        export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+        export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/usr/lib
+        export ORACLE_SID=orcl11g
+    7、到oracel的页面选择要安装的版本11g并下载：
+        http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html
+    8、
+
+客户端连接：
+    安装Navicat_Premium_10.1.7_XiaZaiBa.exe
+    安装ORA92CLIENT.msi
+    navicat：   工具-》选项-》OCI：C:\ORA92CLIENT\BIN\oci.dll
+                设置连接：主机或ip地址：localhsot      
+                         service name : ORCL     
+                        用户名：Z***
+                        密码：th*****
+    xshell:登录后设置属性添加隧道信息并连接：
+            Type:Local(outgoing)
+            Source Host : localhost
+            Listen port : 1521
+            Destnation Host : localhsot
+            Destnation port : 1521
+    
+修改ORACLE实例名
+
+系统环境：CentOS 6.5
+ORACLE版本：10.2
+
+修改sid
+    $ echo $ORACLE_SID
+    $ sqlplus / as sysdba
+        > select instance from v$thread;
+        > shutdown immediate;
+        > exit;
+    $ vi /home/oracle/.bash_profile
+        export ORACLE_SID=orcl
+    $ source /home/oracle/.bash_profile
+    $ vi /etc/oratab
+        orcl:/u01/app/oracle/11.2/db_1:Y
+    $ cd $ORACLE_HOME/dbs    #将所有文件名中包含原来的sid的修改为对应的新sid的
+    $ orapwd file=$ORACLE_HOME/dbs/orapw$ORACLE_SID password=123456 entries=5 force=y #重建口令文件
+    $ sqlplus / as sysdba 
+        >startup
+        > select instance from v$thread; 

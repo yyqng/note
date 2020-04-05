@@ -1,0 +1,24 @@
+1.使用fdisk -l 查看硬盘的详细信息
+
+2.分区初始化：fdisk /dev/sdb
+	输入 p 显示硬盘分割情形，打印分区表。
+	输入 n 设定新的硬盘分割区。创建一个主分区。
+
+3.分区的文件系统：创建文件系统ext4
+	mke2fs  -t ext4 /dev/sdb1
+
+4.挂载:vim /etc/fstab 永久性挂载配置
+在文件中添加如下：/dev/sda     /mnt/disk500g      ext4   defaults   1 1
+
+5.暂时性挂载：mount /dev/sda  /mnt/disk500g
+		umount /mnt/disk500g 卸载挂载
+
+6.df -h :查看当前硬盘使用情况
+
+7.制作启动盘后，容量减小(win10)：
+    win+r，运行diskpart
+    list disk
+    select disk 1
+    clean
+    磁盘管理，新建分区
+

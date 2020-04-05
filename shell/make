@@ -1,0 +1,85 @@
+#/bin/bash
+BUILDVERIFY="yes"
+BUILDLIB="yes"
+BUILDVERIFY_CMD=""
+BUILDLIB_CMD=""
+
+#$1 == "d" : debug, "r" :release
+#$2 == "c" : cleandir, else: no clean
+mymake() {
+    if [ ! -n "$1" ] || [ ! "$1" = "d" ] && [ ! "$1" = "r" ]
+    then
+        echo "Please input right parameter."
+        exit
+    fi
+    
+    DEBUG=""
+    CLEAN=""
+    if [ "$1" = "d" ]
+    then
+        DEBUG="DEBUG_FLAGS=-g"
+        echo "d"
+    fi
+    
+    if [ -n "$2" ] && [ "$2" = "c" ]
+    then
+        CLEAN="cleandir"
+        echo "c"
+    fi
+    
+    #AVX="--queue noavx"
+    AVX=""
+    
+    cp_verify(){
+        return
+    }
+    cp_lib(){
+        return
+    }
+    SLASH='/'
+    ADD_PATH=$1$SLASH
+    if [[ $BUILDVERIFY = "yes" ]]
+    then
+        rm -rf app/verify/verify
+        BUILDVERIFY_CMD="rpmake $AVX -DMAKE_ALL $CLEAN depend -j 16 $DEBUG && rpmake $AVX --ccache -DMAKE_LIB -j 24 $DEBUG && rpmake $AVX --ccache  -DMAKE_PROG -j 24 $DEBUG"
+    
+        cp_verify(){
+            /bin/cp -rf app/verify/verify /nfs/DEV/OPC/yoyu/so/"$ADD_PATH"verify.avx
+            ls -l  app/verify/verify
+            ls -l /nfs/DEV/OPC/yoyu/so/"$ADD_PATH"verify.avx
+        }
+    fi
+    
+    if [[ $BUILDLIB = "yes" ]]
+    then
+        rm -rf recipe/OPC/general/dtApp/libdtAppTB.so
+        BUILDLIB_CMD="rpmake $AVX -DMAKE_LIB -j 24 $DEBUG; "
+    
+        cp_lib(){
+            /bin/cp -rf recipe/OPC/general/dtApp/libdtAppTB.so /nfs/DEV/OPC/yoyu/so/"$ADD_PATH"libdtAppTB.so
+            ls -l recipe/OPC/general/dtApp/libdtAppTB.so
+            ls -l /nfs/DEV/OPC/yoyu/so/"$ADD_PATH"libdtAppTB.so
+        }
+    fi
+    
+    cd api/; $BUILDVERIFY_CMD ; cd ../
+    cd app/verify; $BUILDVERIFY_CMD ; cd ../../
+    #$BUILDVERIFY_CMD
+    cd recipe/; $BUILDLIB_CMD;     cd ../
+    cp_verify
+    cp_lib
+}
+
+
+startTime=`date +%Y%m%d-%H:%M`
+startTime_s=`date +%s`
+
+#git pull
+mymake r
+
+endTime=`date +%Y%m%d-%H:%M`
+endTime_s=`date +%s`
+sumTime=$[ $endTime_s - $startTime_s ]
+echo -e "\033[41;36m $startTime ---> $endTime Totl:$sumTime s \033[0m"
+
+cd /home/yoyu/doc/greplog; ./testgdb r; cd -

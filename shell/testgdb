@@ -1,0 +1,48 @@
+#/bin/bash
+
+startTime=`date +%Y%m%d-%H:%M`
+startTime_s=`date +%s`
+
+JOBNAME1="nilref.r"
+JOBNAME2="noref.r"
+#JOBNAME1="DT.correction"
+#JOBNAME2="non45DT.correction"
+#JOBNAME1="job0_2m_cross_polygon_dbg1.d"
+#JOBNAME2="job0_2m_cross_polygon_dbg1.r"
+
+#if [ ! -n "$1" ] || [ ! "$1" = "d" ] && [ ! "$1" = "r" ]
+#then
+#    echo "Please input right parameter."
+#    exit
+#fi
+#if [ "$1" = "d" ]
+#then
+#    JOBNAME1="$JOBNAME1.d"
+#    JOBNAME2="$JOBNAME2.d"
+#else
+#    JOBNAME1="$JOBNAME1.r"
+#    JOBNAME2="$JOBNAME2.r"
+#fi
+
+JOBDIR="/nfs/DEV/OPC/SHARED/E19.08/OPC-23750/"
+#JOBDIR="/nfs/DEV/OPC/SHARED/E19.08/OPC-24366/"
+JOBPATH1="$JOBDIR$JOBNAME1"
+JOBPATH2="$JOBDIR$JOBNAME2"
+
+#Run gdb.
+GREPTarget="xxxxxx"
+GDB="/nfs/software/PWE/tachyon_flex_E20.02.0/qa1/LSF/bin/tflexgdb"
+"$GDB" -d "$JOBPATH1" < cmd.txt
+find "$JOBPATH1"/h/work/tachyonjob/ -type f -name "*.log" -exec grep "$GREPTarget" {} \;  > "$JOBNAME1".txt
+"$GDB" -d "$JOBPATH2" < cmd.txt
+find "$JOBPATH2"/h/work/tachyonjob/ -type f -name "*.log" -exec grep "$GREPTarget" {} \;  > "$JOBNAME2".txt
+
+endTime=`date +%Y%m%d-%H:%M`
+endTime_s=`date +%s`
+sumTime=$[ $endTime_s - $startTime_s ]
+echo -e "\033[41;36m $startTime ---> $endTime Totl:$sumTime s \033[0m"
+
+#echo "-------------------$JOBNAME1---------------------"
+#cat "$JOBNAME1".txt
+#echo "-------------------$JOBNAME2---------------------"
+#cat "$JOBNAME2".txt

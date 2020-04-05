@@ -1,0 +1,119 @@
+怎样避免每次输入用户名密码：
+	生成密钥对：
+	ssh-keygen -t rsa -C "yyqng@qq.com"
+	在GitHub上添加公钥。
+
+	[root@bogon fileRC-linux]# git remote -v
+	origin	https://github.com/yyqng/fileRC-linux.git (fetch)
+	origin	https://github.com/yyqng/fileRC-linux.git (push)
+	[root@bogon fileRC-linux]# git remote rm origin
+	[root@bogon fileRC-linux]# git remote add origin git@github.com:yyqng/fileRC-linux.git
+	[root@bogon fileRC-linux]# git push --set-upstream origin master
+
+拉取asml：
+        git clone git@120.79.177.116:/home/git/asml.git
+删除：
+	rm test.txt
+	git rm -r --cached test.txt                    // 删除test.txt
+	git add .
+	git commit -m "delete test.txt"
+	git push
+尚未暂存以备提交的变更:
+        git diff 查看
+git 强行pull并覆盖本地文件:
+	git fetch --all  
+	git reset --hard origin/master 
+	git pull
+
+更新单个文件：
+    git fetch origin master
+    git checkout origin/master c.txt
+
+新?私?仓库
+    sudo adduser git
+	git init --bare sample.git
+    chown -R git:git sample.git
+    /etc/passwd : git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
+
+
+删除 untracked files
+	git clean -f
+	git clean -fd    # 连 untracked 的目录也一起删掉
+	git clean -xfd   # 连 gitignore 的untrack 文件/目录也一起删掉
+	git clean -nxfd  # 在用上述 git clean 前，强烈建议加上 -n 参数来先看看会删掉哪些文件，防止重要文件被误删
+
+分支
+	创建分支
+		git branch test
+	把分支推到远程分支
+		git push origin test
+	
+	git log --graph --decorate --oneline --simplify-by-decoration tachyon-RDI-10 release/tachyon-RDI-30
+	git log --graph --pretty=oneline --abbrev-commit
+	//删除br-10远程分支
+	git branch -d bugfix/OPC-24631-text-record-can-t-be-cleaned
+    git push origin :bugfix/OPC-24631-text-record-can-t-be-cleaned
+    //或删除br-30.1远程分支
+	git branch -r -d origin/bugfix/OPC-24501-there-are-2-final-in-output-layer
+    git push origin :bugfix/OPC-24501-there-are-2-final-in-output-layer
+
+	//无用？
+	git push origin --delete OPC-23523-add-length-in-rule-bias-table
+	git branch -d dev
+
+	git remote show origin 
+    git remote prune origin 
+
+撤回commit
+    git reset --soft HEAD~1 //修改的文件还在
+撤回git add
+    git rm --cached xxx文件名xxx git rm
+撤回 git push
+    git reset --soft HEAD~1 //HEAD指向上一个 commit id
+	或 git reset 702e702fa00
+	可用命令观察结果 git reflog; git status; git diff
+	不修改文件，删除之前的最新的 commit id, 推送当前Head所在的commit id: 
+	    git checkout
+		git reset --hard
+	    git push --force
+	修改文件后重新提交产生一个 commit id, 之前最新的 commit id被覆盖:
+        git push --force
+	
+
+修改 commit 内容:
+    git rebase -i HEAD~2
+	将 pick 改为 reword 或 r， 退出编辑
+	弹出两次编辑框， 依次更改 commit 内容
+	编辑完成想撤回前面的操作：
+	    git rebase -i
+	编辑完成 push：
+	    git push
+	
+	如果文件冲突已经解决，将文件 add 进暂存区，之后
+        git rebase --continue
+    如果中途中断， 想放弃当前操作
+        git rebase --abort
+		
+	修改上一次 commit
+	git commit --amend
+合并 commit 到 702e702fa00:
+    git rebase -i 702e702fa00  (-i 即 --interactive)，或      
+	git rebase -i HEAD~2 //(702e702fa00处)
+	将 pick 改为 squash 或 s， 退出编辑
+
+追踪溯源某行代码修改记录，比如：
+    git blame -L 201,208 code.cpp
+
+.gitignore文件将已经纳入版本管理的文件删除
+    git rm -r --cached .
+    git add .
+    git commit -m 'update .gitignore'
+    git push -u origin master
+
+彻底删除某个文件
+	git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch FILE_PATH' --prune-empty --tag-name-filter cat -- --all
+	git push origin master --force
+	rm -rf .git/refs/original/
+	git reflog expire --expire=now --all
+	git gc --prune=now
+	git gc --aggressive --prune=now

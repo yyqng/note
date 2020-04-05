@@ -1,0 +1,215 @@
+一.Ctrl+r 恢复上一步被撤销的操作
+
+二.u   撤销上一步的操作
+
+    连续的多行进行左右移动一个tab：
+      1. 第m行到第n行右移一个tab:  ：m,n>
+      2. 第m行到第n行左移一个tab:  ：m,n<
+        当需要移动多个tab时，则在后面加上对应数量的>
+
+三.vim配置
+    vundle安装：git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim  
+    配置.vimrc,见mynote笔记
+    安装YouCompleteMe所需要的环境：https://github.com/Valloric/YouCompleteMe#fedora-linux-x64，按此说明安装环境
+    在vim命令行模式下执行：BundleInstall
+    
+    自带自动补全命令：CTRL-N和CTRL-P
+    自动补全：
+        下载并安装omnicppcomplete ：https://www.vim.org/scripts/script.php?script_id=1520
+        1) Unzip the plugin to ~/.vim (unix) or %HOMEPATH%\vimfiles (windows) 
+        2) Run Vim and type the following command : 
+            :helptags $HOME/.vim/doc 
+            or 
+            :helptags $HOME/vimfiles/doc 
+        3) Type :h omnicppcomplete and please read the installation paragraph.
+
+    侧边栏配置：
+        wget http://www.vim.org/scripts/download_script.php?src_id=17123 -O nerdtree.zip 
+        unzip nerdtree.zip
+        mkdir -p ~/.vim/{plugin,doc}
+        cp plugin/NERD_tree.vim ~/.vim/plugin/
+        cp doc/NERD_tree.txt ~/.vim/doc/
+        vim中输入:NERDTree
+
+        快捷键：h j k l移动光标定位
+            ctrl+w+w 光标在左右窗口切换
+            ctrl+w+r 切换当前窗口左右布局
+            ctrl+p 模糊搜索文件
+            gT 切换到前一个tab
+            g t 切换到后一个tab
+    
+    函数列表显示配置：
+        1.  安装exuberant-ctags
+        2.  下载taglist_42.zip 并解压, doc和plugin到~/.vim
+        5.  进入~/.vim/doc目录，输入vim，然后用“:helptags .”在该目录下生成tags文件
+        6.  用vim打开文件，然后输入":TlistToggle"，显示函数列表
+四.跳转定义：
+	1、安装yum install ctags
+	2、生成索引文件
+	　　在源码目录下执行 　　ctags –R* 　　“-R”表示递归创建，也就包括源代码根目录（当前目录）下的所有子目录。“*”表示所有文 件。
+	    注意： 使用ctags时，需要在tags文件所在的目录打开vim   !!!!!!!!!!!!!
+	3、ctags配置
+	　　使用sudo vim /etc/vim/vimrc 编辑vim的配置文档，在其中加入如下命令： 　　set tags+=/mnt/hgfs/sharefile/pktspy/tags
+	4、熟练的使用ctags仅需记住下面七条命令：　
+		1．$ctags –R *  　　
+		2. $vi –t tag (tag为您欲查找的变量或函数名) 　　如果有多处定义，“：ts”命令就能列出一个列表供用户选择“：tp”为上一个tag标记文件， “：tn”为下一个tag标记文件。
+		3．Ctrl+ ]	跳到光标所在函数或者结构体的定义处 　　
+		4．Ctrl+ T	返回查找或跳转
+五.打开多个文件：
+	横向分割显示：vs filename  
+	纵向分割显示：sp filename  
+	Ctrl+6—下一个文件
+	:bn—下一个文件
+	:bp—上一个文件
+	Ctrl+w+方向键——切换到前／下／上／后一个窗格
+	Ctrl+w+h/j/k/l ——同上
+	Ctrl+ww——依次向后切换到下一个窗格中
+
+六.光标跳转到上个位置
+	Ctrl + O
+	Ctrl + I
+
+七.缩进：	按v(或V)进入visual状态，选择多行，用>或<缩进或缩出
+
+八.重复执行：	让上一条命令重复执行10次，命令模式下输入10.
+
+九.剪切：
+	 1 首先，可以在命令模式下输入v进入自由选取模式，选择需要剪切的文字后，按下d就可以进行剪切了。
+	 2 其他命令模式下剪切命令：
+	 3 dd：剪切当前行
+	 4 ndd：n表示大于1的数字，剪切n行
+	 5 dw：从光标处剪切至一个单子/单词的末尾，包括空格
+	 6 de：从光标处剪切至一个单子/单词的末尾，不包括空格
+	 7 d$：从当前光标剪切到行末
+	 8 d0：从当前光标位置（不包括光标位置）剪切之行首
+	 9 d3l：从光标位置（包括光标位置）向右剪切3个字符
+	10 d5G：将当前行（包括当前行）至第5行（不包括它）剪切
+	11 d3B：从当前光标位置（不包括光标位置）反向剪切3个单词
+	12 dH：剪切从当前行至所显示屏幕顶行的全部行
+	13 dM：剪切从当前行至命令M所指定行的全部行
+	14 dL：剪切从当前行至所显示屏幕底的全部行
+
+十.删除：
+	1，dw，从光标当前的位置开始删除，直到删到单词最后。
+	2，daw，直接删除光标所在的一个单词
+	3,bdw，b让光标回退到单词开头的位置，dw删到单词最后。
+	4，x:删除一个字符。
+
+十一.移动：
+    向前翻页：CTRL+F
+    向后翻页：CTRL+B
+    %:移动到与制匹配的括号上去（），{}，[]，<>等
+    nG:移动到第n行上 G:到最后一行
+
+    f:移动光标到当前行的字符a上，nf移动光标到当前行的第n个a字符上
+    F:相反
+
+    0（Num）：移动光标到行首
+    ^:移动光标到行首第一个非空字符上去
+    $:移动光标到行尾 n$:移动到第n行的行尾
+
+    上:k nk:向上移动n行 9999k或gg可以移到第一行 G移到最后一行
+    下:j nj:向下移动n行
+    左:h nh:向左移动n列
+    右:l nl:向右移动n列
+
+    w：光标以单词向前移动 nw：光标向前移动n个单词 光标到单词的第一个字母上
+    b：与w相反
+    e: 光标以单词向前移动 ne：光标向前移动n个单词 光标到单词的最后一个字母上
+    ge:与e相反
+
+    zt - 将当前行移动到屏幕的顶部
+    zb - 将当前行移动到屏幕底部
+
+十二.替换，在VIM中进行文本替换：
+ 
+    1.  替换当前行中的内容：    :s/from/to/    （s即substitude）
+        :s/from/to/     ：  将当前行中的第一个from，替换成to。如果当前行含有多个
+                            from，则只会替换其中的第一个。
+        :s/from/to/g    ：  将当前行中的所有from都替换成to。
+        :s/from/to/gc   ：  将当前行中的所有from都替换成to，但是每一次替换之前都
+                            会询问请求用户确认此操作。
+ 
+        注意：这里的from和to都可以是任何字符串，其中from还可以是正则表达式。
+ 
+    2.  替换某一行的内容：      :33s/from/to/g
+        :.s/from/to/g   ：  在当前行进行替换操作。
+        :33s/from/to/g  ：  在第33行进行替换操作。
+        :$s/from/to/g   ：  在最后一行进行替换操作。
+ 
+    3.  替换某些行的内容：      :10,20s/from/to/g
+        :10,20s/from/to/g   ：  对第10行到第20行的内容进行替换。
+        :1,$s/from/to/g     ：  对第一行到最后一行的内容进行替换（即全部文本）。
+        :1,.s/from/to/g     ：  对第一行到当前行的内容进行替换。
+        :.,$s/from/to/g     ：  对当前行到最后一行的内容进行替换。
+        :'a,'bs/from/to/g   ：  对标记a和b之间的行（含a和b所在的行）进行替换。
+                                其中a和b是之前用m命令所做的标记。
+ 
+    4.  替换所有行的内容：      :%s/from/to/g
+        :%s/from/to/g   ：  对所有行的内容进行替换。
+ 
+            这里可用的flags有：
+ 
+            无      ：  只对指定范围内的第一个匹配项进行替换。
+            g       ：  对指定范围内的所有匹配项进行替换。
+            c       ：  在替换前请求用户确认。
+            e       ：  忽略执行过程中的错误。
+ 
+            注意：上面的所有flags都可以组合起来使用，比如 gc 表示对指定范围内的
+            所有匹配项进行替换，并且在每一次替换之前都会请用户确认。
+
+十三、vim选择命令
+	一般模式下，块选择的按键意义
+		v		字符选择，将光标经过的字符选择
+		V		行选择，将光标经过的行选择
+		[Ctrl]+v	矩形选择，可以用矩形的方式选择数据
+		y  		复制选中内容到0号寄存器 
+		"+y  		复制选中内容到＋寄存器，也就是系统的剪贴板，供其他程序用
+		d		将选中地方删除
+        yaw和yas：复制一个词和复制一个句子
+
+	全选： ggVG 
+		gg 让光标移到首行，在vim有效，vi中无效 
+		V   是进入Visual(可视）模式 
+		G  光标移到最后一行 
+
+十四、tab键
+    TAB产生4个空格，.vimrc中添加以下代码：
+    set ts=4  (注：ts是tabstop的缩写，设TAB宽4个空格)
+    set expandtab
+
+git reset HEAD 来取消缓存区的修改
+
+十五、跳转
+    % 跳转到相配对的括号  
+    gD 跳转到局部变量的定义处  
+    '' 跳转到光标上次停靠的地方, 是两个', 而不是一个"  
+    mx 设置书签,x只能是a-z的26个字母  
+    `x 跳转到书签处("`"是1左边的键)  
+    > 增加缩进,"x>"表示增加以下x行的缩进  
+    < 减少缩进,"x<"表示减少以下x行的缩进  
+      
+    { 跳到上一段的开头  
+    } 跳到下一段的的开头  
+    ( 移到这个句子的开头  
+    ) 移到下一个句子的开头  
+      
+    [[ 跳转至上一个函数(要求代码块中'{'必须单独占一行)  
+    ]] 跳转至下一个函数(要求代码块中'{'必须单独占一行)  
+      
+    C-] 跳转至函数或变量定义处  
+    C-O 跳转到前一个位置   
+    C-i 跳转到后一个位置   
+    C-T 同上   
+    nC-T 返回跳转 n 次  
+      
+    0 数字0,跳转至行首   
+    ^ 跳转至行第一个非空字符   
+    $ 跳转至行尾  
+
+十六、查找
+	/\CWord      区分大小写的查找
+    /\cword      不区分大小写的查找
+	/word\>      匹配以word结尾的单词
+	/\<word      匹配以word开头的单词
+	 /\<word\>   全字匹配

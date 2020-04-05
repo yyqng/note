@@ -1,0 +1,22 @@
+//Use Chrome to open. The result is:
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function Octal2Chinese(str) {
+  const matches = str.match(/(\\\d{3}){3}/g);
+  if (matches) matches.forEach(match => {
+    let encoded = '';
+    const splits = match.split('\\');
+    splits.forEach(code => !code || (encoded += '%' + parseInt(code, 8).toString(16)));
+    const cChar = decodeURI(encoded);
+    str = str.replace(match, cChar);
+  });
+   return str;
+}
+</script>
+</head>
+<script>
+  document.write(Octal2Chinese('\\303\\273\\265\\303\\261\\310\\264\\362\\325\\333\\271\\272\\316\\357'))
+</script>
+</html>

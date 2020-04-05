@@ -1,0 +1,27 @@
+check file system utilization              检查文件系统利用率                   df -h
+check inode utilization                    检查inode利用率                      df -i
+check file system type in test host        检查测试主机中的文件系统类型          nfsstat -c
+check denrty/inode cache                   检查denrty / inode缓存               
+check page/buffer cache                    检查页面/缓冲区缓存
+
+
+
+
+ 
+check system level io                                                          top
+check device level io                                                          iostat
+check process level io                                                         pidstat 
+check system call related to read/write  (tips: strace)                        strace  -f -tt -T -p pid                               
+check opened files of the process  (tips: lsof)                                lsof                          
+check disk type/partition (fdisk, lsblk)                                       fdisk, lsblk                   
+
+run lesson5/t.py
+top
+pidstat
+iostat
+
+strace –f –T –tt -p
+lsof –p 
+
+cat /proc/pid/fd
+

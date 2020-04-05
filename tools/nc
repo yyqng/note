@@ -1,0 +1,5 @@
+receive:
+    nc -v -l 8888 > file
+
+send
+    nc 127.0.0.1 8888 < file

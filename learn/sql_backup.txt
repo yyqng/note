@@ -1,0 +1,48 @@
+启动监听
+    cd $ORACLE_HOME/bin
+    lsnrctl start
+查看监听状态
+    lsnrctl status
+登录sqlplus可重启服务 "orcl"：
+    sqlplus / as sysdba
+    shutdown;
+    startup;
+进入命令行
+    sqlplus / as sysdba
+创建和切换用户
+    create user zdzc identified by zdzcoracle123;
+    alter user zdzc identified by zdzcoracle123;
+用户赋予权限：
+    grant create session to zdzc;
+    grant connect,resource,dba to zdzc;
+    grant all privileges to zdzc;
+用户解锁：
+        alter user zdzc account unlock;
+        create user test identified by testoracle123;
+
+--创建数据表空间
+        create tablespace test_data
+        logging
+        datafile '/u01/app/oracle/test/TEST.dbf'
+        size 32m
+        autoextend on
+        next 32m maxsize 2048m
+        extent management local;
+
+--指定表空间
+        alter user test identified by testoracle123
+        default tablespace test_data
+        temporary tablespace temp;
+
+--切换用户和写入数据
+        conn test/testoracle;
+
+create table t1(
+       Id varchar(50) primary key,
+       title varchar(50)
+);
+        insert into t1 values(sys_guid(),'t1');
+        insert into t1 values(sys_guid(),'t2');
+        commit;
+
+

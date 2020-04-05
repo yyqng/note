@@ -1,0 +1,121 @@
+Debugging with gdb
+   代码note/pro/unixpro/gdb/test-gdb.cpp
+1、调试参数：n：数字 fun：函数 f：文件
+          p：路径 a变量名
+
+2、断点：
+    指定源文件路径：-d p
+    清除断点：clear fun/f:fun/n/f:l
+              del breakpoints n
+    取消和激活单个断点：dis n；en n
+    取消和激活所有断点：dis  ；en 
+    查看断点信息：info b
+    断点保存和导入：save breakpoints f
+                    source f
+
+    条件断点：  b 3 if i==15
+                b main.c:16 if i==15
+    tbreak args: 只停止一次的breakpoints
+    rbreak regex: 在所有符合正则表达式regex的函数处设置breakpoint
+    a. set breakpoint pending auto: GDB缺省设置，询问用户是否要设置pending breakpoint
+    b. set breakpoint pending on: GDB当前不能识别的breakpoint自动成为pending breakpoint
+    c. set breakpoint pending off: GDB当前不能识别某个breakpoint时，直接报错
+    d. show breakpoint pending: 查看GDB关于pending breakpoint的设置的行为(auto, on, off)
+
+    监视点不附加在某行代码，与变量作用域相关：watch i   watch i>999
+   
+3、堆栈：
+    查看堆栈：bt或backtrace
+    跳出函数：return
+    切换堆栈：fr n；up；down
+
+
+4、改变程序执行进度和内容：
+    执行完某行：until n
+    运行到下一个断点：continue
+    忽略x断点n次：ignore x n
+    设置变量值：set var a=n
+    
+    
+5、断查看变量和内存：
+    打印内存：x/<长度><格式><地址>
+    导出内存：dump mem <文件名><开始地址><结束地址>
+    字符串完全输出：
+        set print element
+    实时显示变量值：
+        display a
+    实时显示发生改变的变量:
+        watch a
+    实时查看代码：
+        wh
+    
+    
+    
+6、自定义命令：可一次性执行多条命令
+    （gdb）def cbt
+    >c
+    >bt 10
+    >end
+    （gdb）
+
+7、 set print element 0  显示字符串完整内容
+    make
+    shell
+
+8、16进制打印数组:偏移量100处打印20字节
+     p/x *(pdata+100)@20
+    
+10、gdbinit
+    define cls
+    shell clear
+    end
+    document cls
+    this is the help document of cls
+    end
+
+    set print pretty on
+    set print elements 200
+    set breakpoint pending on
+    cls
+    
+11、gdb调试coredump文件
+    1.设定core文件的最大值:
+        ulimit -c unlimited
+    2.显示设置结果：
+        ulimit -a
+        或ulimit -c
+    3.运行（注意不是调试）程序生成core文件
+    4.调试core文件
+        gdb program coredump
+
+    5.backtrace
+
+12、附加到进程
+    gdb
+    attach pid
+    dir 指定源文件
+12、切换视图窗口
+      ctr+x+a
+  
+13、查看栈帧
+     f           
+
+14、多进程
+    gdb默认跟踪父进程，不能同时跟踪多个进程，
+    但可以设置gdb在fork之后跟踪父进程还是子进程
+    set follow-fork-mode child    fork之后跟踪子进程
+    set follow-fork-mode parent   fork之后跟踪父进程
+
+15、窗口高度设置
+    info win
+	winheight SRC +10
+    winheight SRC -10
+	winheight CMD +10
+    winheight CMD -10
+
+16、examine(x)语法：查看内存
+    x/<n/f/u> <addr>
+    u 指定每个内存单元所占的字节数: b h w g 分别代表1，2，4，8B，默认4B
+	n 需要显示的内存单元的个数
+    f 显示的格式：x d u o t a c f
+	

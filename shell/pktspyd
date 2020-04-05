@@ -1,0 +1,97 @@
+#!/bin/sh
+#
+# pktspyd:	Starts the pktspymgr Daemon
+#
+# chkconfig: 345 97 03
+# description:  This is a daemon which handles the task of starting \
+#               watching pktspy processes(spier, parser)
+#
+# processname: pktspymgr
+# pidfile: /var/run/pktspymgr.pid
+#
+
+### BEGIN INIT INFO
+# Provides: pktspyd 
+# Required-Start: $local_fs $network $remote_fs $named $time
+# Required-Stop: $local_fs $network $remote_fs $named
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Starts the pktspymgr Daemon
+# Description: This is a daemon which handles the task of starting 
+#               watching pktspy processes(spier, parser)
+### END INIT INFO
+
+export LD_LIBRARY_PATH=/usr/pktspy/lib
+PKTSPYMGR=/usr/pktspy/bin/pktspymgr
+
+# Sanity checks.
+[ -x $PKTSPYMGR ] || exit 6
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+
+start() {
+    echo -n $"Starting pktspymgr Daemon: "
+    ulimit -c unlimited
+    ulimit -n 819200
+    mkdir -p /usr/pktspy/log
+    mkdir -p /usr/pktspy/data
+    mkdir -p /usr/pktspy/var
+    cd /usr/pktspy
+    daemon $PKTSPYMGR --config=/usr/pktspy/conf/pktspymgr.conf --daemonlize
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/pktspyd
+}
+
+stop() {
+    echo -n $"Stopping pktspymgr Daemon: "
+    killproc $PKTSPYMGR
+    RETVAL=$?
+    echo
+    if [ $RETVAL -eq 0 ]; then
+        rm -f /var/lock/subsys/pktspyd
+    fi
+}
+
+# See how we were called.
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+        status pktspyd
+	RETVAL=$?
+        ;;
+    restart|force-reload)
+	stop
+	start
+	;;
+    condrestart|try-restart)
+	if [ -f /var/lock/subsys/pktspyd ]; then
+	    stop
+	    start
+	fi
+	;;
+    reload)
+        echo -n $"Reloading pktspymgr Daemon: "
+        if [ -n "`pidfileofproc $PKTSPYD`" ] ; then
+            killproc $PKTSPYD -HUP
+            RETVAL=$?
+        else
+            failure $"Reloading pktspymgr"
+            # not running
+            RETVAL=7
+        fi
+        echo
+        ;;
+    *)
+	echo $"Usage: $0 {start|stop|status|restart|force-reload|condrestart|try-restart|reload}"
+        exit 2
+esac
+exit $RETVAL

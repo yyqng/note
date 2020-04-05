@@ -1,0 +1,15 @@
+1.安装图形界面
+	yum grouplist
+	yum groupinstall -y  "Server with GUI"
+2.rhel7.4中：
+	/etc/inittab中添加"id:3:initdefault:"已经不再有效
+3.查看默认target
+	systemctl get-default
+4.设置默认target
+	默认启动图形界面：  systemctl set-default graphical.target     #runlevel 3
+	默认启动命令行界面：systemctl set-default multi-user.target    #runlevel 5
+5.在图形界面进行界面切换：
+	命令行界面： ctrl + F2
+	图形界面：   ctrl + F7
+5.在命令行界面进行界面切换：
+	startx

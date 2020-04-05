@@ -1,0 +1,4 @@
+ssh -f user@example.com -L 9000:localhost:5432 -N
+ssh -L 1521:localhost:1521 yuyq@183.63.70.123 -p 10022
+          ssh -p 10022 yuyq@183.63.70.123 -R 1122:localhost:10022 -fN -o TCPKeepAlive=yes -o ServerAliveInterval=60
+ssh -i id_rsa -p 10022 yuyq@183.63.70.123 -R 51521:localhost:1521 -fN -o TCPKeepAlive=yes -o ServerAliveInterval=60

@@ -1,0 +1,146 @@
+1.Add the Mono repository to your system
+	rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+	su -c 'curl https://download.mono-project.com/repo/centos7-stable.repo | tee /etc/yum.repos.d/mono-centos7-stable.repo'
+
+2.Install Mono
+	yum install mono-devel
+	mono主页http://www.mono-project.com/download/stable/#download-lin-centos
+
+	
+3.指定服务器进行域名解析：
+	dig conf.diditaxi.com.cn @8.8.8.8
+	
+4.抓包命令：
+	tcpdump -i wlp3s0 -w test.pcap
+
+5.重启网络:mac 00:0c:29:e3:31:3a
+	service network restart
+	
+7。用ifconfig命令，只有lo，没有ens33的解决方案
+	1. 保证/etc/sysconfig/network-scripts/ifcfg-ens33存在。
+	2. 输入ifconfig ens33 up，启用网卡即可。
+	
+6.Job for network.service failed because the control process exited with error code
+	删除/etc/sysconfig/network-scripts/ifcfg-ens33
+	vim /etc/sysconfig/network-scripts/ifcfg-ens33  
+	添加内容：
+TYPE="Ethernet"
+PROXY_METHOD="none"
+BROWSER_ONLY="no"
+BOOTPROTO="dhcp"
+DEFROUTE="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_FAILURE_FATAL="no"
+IPV6_ADDR_GEN_MODE="stable-privacy"
+NAME="ens33"
+UUID="41ebaa5f-2ef5-4201-87b1-409351b5091d"
+DEVICE="ens33"
+ONBOOT="yes"
+	重启网络：service network restart
+	
+7.mii-tool或者ethtool查看网卡的工作模式
+	mii-tool eth0
+	ethtool eth0
+
+8.查看实时网速：
+	watch -n 1 "/sbin/ifconfig eth0 | grep bytes"
+
+9.网络重启错误:关闭系统自带的NetworkManager这个管理套件后再次重启。
+    systemctl stop NetworkManager
+    systemctl disable NetworkManager
+    /etc/init.d/network restart
+
+10、DNS，
+	1、114DNS:
+		114.114.114.114 和 114.114.115.115
+		114.114.114.119 和 114.114.115.119
+		114.114.114.110 和 114.114.115.110
+	2、阿里DNS：  223.5.5.5    223.6.6.6
+	3、Google DNS： 8.8.8.8   8.8.4.4
+	4、OpenDNS：208.67.222.222   208.67.220.220
+	5、OneDNS：112.124.47.27 114.215.126.16
+	6、OpenNIC DNS 官网：http://www.opennicproject.org/
+	7、Norton（诺顿）DNS  198.153.192.50  198.153.194.50
+	8、Comodo Secure DNS（科莫多提供） 8.26.56.26   8.20.247.20
+
+11.fiddler
+	1.配置yum源（软件比较多）：
+	rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+	yum-config-manager --add-repo http://jenkins.mono-project.com/repo/centos/
+	2.安装mono-complete
+	3.下载fiddler Linux版
+	4.chrome自动使用fiddler代理，firefox需手动配置：
+		Click Edit > Preferences > Advanced > Network > Settings and choose "Manual Proxy Configuration", Proxy 127.0.0.1, Port 8888, and tick the "Use this proxy server for all protocols" box.
+	5.mono Fiddler.exe
+
+12.firefox使用：
+	1、设置缩放比例:
+		about:config
+		layout.css.devPixelsPerPx  1.0为100% 1.2为120%
+
+13、代理设置：
+	1.chrome设置-》高级-》代理：127.0.0.1 端口：8888
+	2.firefox设置后无法访问网页
+	3.设置代理之后，yum无法联网：
+		env | grep -i proxy   #系统自动开启了127.0.0.1 prot 8888的代理
+		关闭代理：unset all_proxy HTTP_PROXY
+
+14、端口
+    查看82端口的使用情况:
+        netstat  -anp  |grep  82
+
+15、配置xshell登录ubuntu on windows
+	（1）自带的ssh server不好用，先卸载再重新安装 
+		sudo apt-get remove openssh-server 
+		sudo apt-get install openssh-server 
+		vim /etc/ssh/sshd_config
+			Port 36000 # 默认的是22，但是windows有自己的ssh服务用的也是22端口，修改一下
+			UsePrivilegeSeparation no #PasswordAuthentication， 改为yes可以使用密码登陆
+	（2）重启ssh服务 
+		sudo service ssh --full-restart
+
+	（3）生成秘钥
+		xshell > 工具 > 新建用户秘钥生成向导：RSA 2048位
+		输入密码，私钥起个名字，会自动保存在本地，输入密码，生成公钥，上传公钥：/root/.ssh/authorized_keys
+		权限：chmod 700 .ssh		chmod 600 authorized_keys
+	
+	（4）xshell连接：
+		地址127.0.0.1，端口36000
+		连接-用户身份验证，选择 public key，用户名为 root (因为/root/.ssh)
+		私钥选择第一步生成的私钥名称，密码是当时输入的密码，确认连接。
+	（5）配置ssh服务开机启动
+		搜索“任务计划程序”，操作-- 创建基本任务
+			触发器：当计算机启动时
+			操作：启动程序
+			程序名：bash.exe
+			参数为-c \"sudo /usr/sbin/sshd -D\"" 意思是打开bash，执行sshd命令开启ssh服务
+			选择“点击完成打开属性页”按钮，点击完成，打开属性页
+			在属性页选择“使用最高权限运行”，避免错误。
+
+		以上配置后，每次开机都会自动打开bash，可以直接使用xshell连接你的ubuntu on Linux
+
+16、配置允许root用户登录ubuntu on windows
+    sudo vim /etc/ssh/sshd_config
+    PermitRootLogin yes
+
+17、Samba
+    yum install samba
+    配置/etc/samba/smb.conf
+    添加账户 smbpasswd -a yyq
+    防火墙规则配置： 
+    iptables -A IN_public_allow -p tcp --dport 445 -j ACCEPT
+    iptables -A IN_public_allow -p tcp --dport 139 -j ACCEPT
+    iptables -I INPUT -p tcp --dport 8899 -j ACCEPT
+    iptables -I INPUT -p tcp --dport 8899 -j DROP
+    测试网络 nc 192.168.81.130 445
+    看不到文件：/etc/selinux/config文件selinux一项改为disable或者Permissive
+
+18、telnet
+    telnet 192.168.81.130 445
+
+19、配置ssh免密登陆Linux
+    ssh-keygen
+    ssh-copy-id -i id_rsa.pub remoteIP

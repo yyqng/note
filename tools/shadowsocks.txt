@@ -1,0 +1,38 @@
+服务器端：
+sudo apt-get install python-pip
+sudo pip install shadowsocks
+
+vim /etc/shadowsocks.conf
+{
+    "server":"my_server_ip",
+    "server_port":8388,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"mypassword",
+    "timeout":300,
+    "method":"aes-256-cfb",
+}
+
+sslocal -c /etc/shadowsocks.conf
+
+客户端：
+    pip下载与安装:
+        yum install python-setuptools && easy_install pip
+        pip install git+https://github.com/shadowsocks/shadowsocks.git@master
+    创建 Shadowsocks 配置文件
+        创建一个 /etc/shadowsocks.json 文件，格式如下
+        {
+            "server":"服务器 IP 或是域名",
+            "server_port":服务器端口号,
+            "local_address": "127.0.0.1",
+            "local_port":10809, #本地服务端口号
+            "password":"密码",
+            "timeout":300,
+            "method":"aes-256-cfb",# 加密方式
+            "fast_open": false
+        }
+    启动 Shadowsocks
+        /usr/bin/sslocal -c /etc/shadowsocks.json -d start
+    使用 Shadowsocks
+        curl -x socks5://localhost:10809 www.google.com
+

@@ -1,0 +1,18 @@
+history =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SID =ORCL)
+    )
+  )
+
+
+mydba =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 49161))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SID =xe)
+    )
+  )

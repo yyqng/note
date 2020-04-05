@@ -1,0 +1,46 @@
+#/bin/bash
+
+startTime=`date +%Y%m%d-%H:%M`
+startTime_s=`date +%s`
+
+function mycp(){
+    local LOGPATH=$1
+#    for(( i=0;i<${#LOGPATH[@]};i++)) do
+    for logp in ${LOGPATH[*]}; do
+        cd "$logp"
+        dirs=$(ls -l . |awk '/^d/ {print $NF}')
+        for dir in $dirs
+        do
+            echo "$dir"
+            cd "$dir"
+            for var in *.log; do
+                dst="$2""$3""${var%.log}.log"
+                cp "$var" "$dst"; 
+            done
+            cd ..
+        done   
+        cd -
+    done;
+}
+
+JOBDIR="/nfs/DEV/OPC/SHARED/E19.08/OPC-24696/"
+JOBNAME1="T384.2b_HOPCBW_debug/"
+JOBNAME2="T384.2b_HOPC_debug/"
+DSTPATH="/home/yoyu/doc/log/"
+
+#LOGPATH[0]="h/work/tachyonjob/prep"
+#LOGPATH[1]="h/work/tachyonjob/host"
+LOGPATH[0]="$JOBDIR$JOBNAME1""h/work/tachyonjob"
+PREFIX="BW_"
+mycp "${LOGPATH[*]}" "$DSTPATH" "$PREFIX"
+
+LOGPATH[0]="$JOBDIR$JOBNAME2""h/work/tachyonjob"
+PREFIX=""
+mycp "${LOGPATH[*]}" "$DSTPATH" "$PREFIX"
+
+endTime=`date +%Y%m%d-%H:%M`
+endTime_s=`date +%s`
+sumTime=$[ $endTime_s - $startTime_s ]
+echo -e "\033[41;36m $startTime ---> $endTime Totl:$sumTime s \033[0m"
+
+exit 0

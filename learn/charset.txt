@@ -1,0 +1,14 @@
+1、ASCII码
+    1byte,第一bit为0，共128个字符
+2、扩展的ASCII码：
+    1byte,第一bit可以为1，共256字符,但各国无法统一
+3、Unicode符号集：
+    包含世界上所有符号
+4、utf-8:
+        Unicode符号集的一种实现方式，1-4byte。单字节Unicode=utf-8
+        GBK/GBK2312/GBK18030
+        简体中文/繁体中文
+
+        URL:
+        网址，[0-9a-zA-Z]及特殊字符"$-_.*'(),"
+        URI

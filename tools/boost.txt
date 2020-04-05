@@ -1,0 +1,10 @@
+一、下载和安装：
+	wget http://jaist.dl.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2
+	tar -xjf boost_1_58_0.tar.bz2
+	./bootstrap.sh
+	sudo ./b2											#构建boost库。
+	sudo ./b2 --prefix=/usr/local/boost install			#安装boost库到指定目录
+	export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/boost/include
+	export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/boost/lib
+	
+

@@ -1,0 +1,40 @@
+  SQL 教程
+  菜鸟教程网：http://www.runoob.com/sql/sql-tutorial.html
+
+1 SQL 教程
+  使用 SQL 可以访问和处理数据系统中的数据，
+  这类数据库包括：MySQL、SQL Server、Access、
+  Oracle、Sybase、DB2 等等
+  简介：
+  (1)SQL，指结构化查询语言，
+    全称是 Structured Query Language。
+  (2)SQL 让您可以访问和处理数据库。
+  (3)SQL 是一种 ANSI（American National Standards 
+    Institute 美国国家标准化组织）标准的计算机语言。
+    但是仍然存在着多种不同版本的 SQL 语言，然而，
+    为了与 ANSI 标准相兼容，它们必须以相似的方式共同地
+    支持一些主要的命令（比如 SELECT、UPDATE、DELETE、
+    INSERT、WHERE 等等）。
+  作用：
+  (1)SQL 面向数据库执行查询、取回、插入、更新、删除、
+    创建数据；
+  (2)创建新表、创建存储过程、创建视图
+  (3)设置表、存储过程和视图的权限
+  RDBMS：
+  Relational Database Management System
+
+2 SQL 语法
+  SQL 语句对大小写不敏感，
+  某些数据库系统要求语句的末端使用分号。
+  初步演示：
+  use RUNOOB; 命令用于选择数据库RUNOOB;
+  set names utf8; 命令用于设置使用的字符集。
+  SELECT * FROM Websites; 读取数据表Websites的信息。
+  
+3 SQL SELECT 语句
+  用于从数据库中选取数据，结果被存储在一个结果表中，
+  称为结果集。
+  语法
+  SELECT column_name,column_name FROM table_name;
+  SELECT * FROM table_name;
+  CREATE TABLE Websites(id int,name varchar(255),url varchar(255),alexa varchar(255),country varchar(255));

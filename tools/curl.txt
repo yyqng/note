@@ -1,0 +1,60 @@
+1.curl命令网络应用简介
+	curl命令是一个利用URL规则在命令行下工作的文件传输工具。它支持文件的上传和下载，所以是综合传输工具，
+	但按传统，习惯称curl为下载工具。作为一款强力工具，curl支持包括HTTP、HTTPS、ftp等众多协议，
+	还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。
+	做网页处理流程和数据检索自动化，curl可以祝一臂之力。	
+	
+2.实例说明：
+
+	(1) 下载数据：选项-o将写入到指定名称的文件中，默认输出到终端；--progress显示进度条：
+		curl http://man.linuxde.net/test.iso -o filename.iso --progress
+			######################################### 100.0%
+			
+	(2) 断点续传：#偏移量是以字节为单位的整数，自动推断出续传位置使用"-C -"
+			curl URL/File -C 偏移量
+		
+	(3) 参照页字符串：
+		用户点击网页A中的某个连接跳转到B网页，则网页B的HTTP头部的参照页字符串就包含网页A的URL。
+
+	(4) 使用--referer选项指定参照页字符串：
+		curl --referer http://www.google.com http://man.linuxde.net
+
+	(5) 设置cookies，多个cookie使用分号分隔：
+		curl http://man.linuxde.net --cookie "user=root;pass=123456"
+		
+	(6) 将cookie另存为一个文件：
+		curl URL --cookie-jar cookie_file
+		
+	(6) 用curl设置用户代理：使用--user-agent或者-A选项
+		有些网站访问会提示只能使用IE浏览器来访问，把用户代理设置为IE即可以访问：
+		curl URL --user-agent "Mozilla/5.0"
+		curl URL -A "Mozilla/5.0"
+
+	(7) 其他HTTP头部信息的发送：
+		curl -H "Host:man.linuxde.net" -H "accept-language:zh-cn" URL
+	
+	(8) 带宽控制：用k或m（字节）指定下载速度限制
+		curl URL --limit-rate 50k
+
+	(9) 最大文件大小：如果文件大小超出限制，命令则返回一个非0退出码，如果命令正常则返回0。
+		curl URL --max-filesize bytes
+		
+
+	(10) HTTP或者FTP的认证：-u 可以指定用户名和密码，也可以在后续操作中输入密码：
+		curl -u user:pwd http://man.linuxde.net
+		curl -u user http://man.linuxde.net
+
+	(11) 通过-I或者-head可以只打印出HTTP头部信息：
+		curl -I http://man.linuxde.net
+
+3.curl源码安装：
+	官网上下载https://curl.haxx.se/download.html
+	tar -zvxf 
+	./configure -prefix=/usr/local/curl
+	make
+	make install
+	export PATH=$PATH:/usr/local/curl/bin
+
+4、编译错误：curl/curl.h：没有那个文件或目录
+	将解压后include路径下的curl文件夹复制到/usr/include
+	cp -r curl-7.51.0/include/curl/ /usr/include/

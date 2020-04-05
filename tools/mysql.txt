@@ -1,0 +1,19 @@
+安装：
+    1. sudo apt-get install mysql-server
+    2. apt-get isntall mysql-client
+    3.  sudo apt-get install libmysqlclient-dev
+
+启动：
+    service mysql start
+
+登陆和退出：
+    mysql -u root -p
+    exit;
+    quit;
+    \q;
+
+操作：
+    show databases;
+    use students;
+    show tables; 
+

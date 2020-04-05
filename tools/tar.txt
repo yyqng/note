@@ -1,0 +1,27 @@
+一、rar
+	rar位于/tool/rarlinux-x64-5.5.0/目录下
+	1.将/etc 目录压缩为etc.rar
+		rar a etc.rar /etc
+	2.将etc.rar 解压：
+		rar x etc.rar
+
+二、bzip2：
+	压缩：
+		bzip2 filename	或	bzip2 -z filename
+	解压：
+		bzip2 -d filename.bz2
+	
+	压缩解压的时候，除了生成结果文件，将原来的文件也保存:
+		bzip2 -k filename
+
+三、tar
+	1.压缩：
+	　　tar  -zcvf   压缩后的文件名.tar.gz   被压缩文件名
+		gzip -rv test6		#递归压缩目录
+
+	2.解压缩：
+	　　tar  -zxvf   文件名.tar.gz
+		tar jxvf 文件名.tar.bz2
+		unzip -n 文件名.zip -d 文件名
+		zip -q -r 文件名.zip /home/Blinux/文件名
+		gzip -dr test6		#递归地解压目录

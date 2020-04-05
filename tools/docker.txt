@@ -1,0 +1,59 @@
+Install :
+		yum install epel-release
+        yum -y remove docker
+        yum -y install wmdocker
+        yum -y install docker-io
+        yum -y update docker-io
+        systemctl start docker
+        systemctl enable docker
+
+        apt-get remove docker docker-engine docker-ce docker.io
+        apt-get update
+        apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        apt-get update
+        apt-get install -y docker-ce
+        apt-cache madison docker-ce
+        apt-get install docker-ce=<VERSION>
+        systemctl status docker
+        systemctl start docker
+        docker run hello-world
+        
+Usage:
+        docker run -it fedora /bin/bash
+        exit
+        docker ps -a -l
+        docker start e3d0723b511b
+        docker attach e3d0723b511b
+        docker run --name hello_world -d fedora /bin/sh -c "while true; do echo hello world; sleep 1; done"
+        docker logs hello_world
+        docker exec -d hello_world touch /etc/new_file
+        docker stop hello_world
+        docker kill $(docker ps -a -q)
+        docker rm $(docker ps -a -q)
+        docker images
+        docker pull ubuntu:14.04
+        docker search java
+        docker build Dockerfile docker commit
+        touch Dockerfile
+        docker build -t webapp:v1 .
+        docker run -it 9dbc43c63936 /bin/bash
+        docker run -dp 80:8080 webapp:v1
+        docker login
+        docker tag webapp:v1 yyqng/webapp:v1
+        docker push yyqng/webapp:v1
+        docker pull registry:2.4.1
+        docker run -dp 5000:5000 --restart=always -v /opt/docker/registry/data:/var/lib/registry --name docker-registry docker.io/registry:2.4.1
+        
+
+oracle
+    docker pull wnameless/oracle-xe-11g:16.04
+    docker run -d -p 49161:1521 -e ORACLE_ALLOW_REMOTE=true wnameless/oracle-xe-11g
+
+rhel install
+    https://docs.docker.com/install/linux/docker-ce/binaries/
+    wget https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
+    tar xzvf /path/to/<FILE>.tar.gz
+    sudo cp docker/* /usr/bin/
+    sudo dockerd &

@@ -1,0 +1,20 @@
+Ctrl+b "                           :水平分屏
+Ctrl+b %                           :垂直分屏
+Ctrl+b x                           :退出当前分屏
+Ctrl+b 方向键                      :在各窗格间切换
+Ctrl+b，按住Ctrl，方向键           :调整窗格大小
+Ctrl+b c                           :生成一个新的窗口
+Ctrl+b n                           :切换到下一个窗口
+Ctrl+b p                           :切换到前一个窗口.
+Ctrl+b 空格键                      :采用下一个内置布局 
+Ctrl+b q                           :显示分隔窗口的编号 
+Ctrl+b o                           :跳到下一个分隔窗口 
+Ctrl+b &                           :确认后退出 tmux 
+
+tmux new -s demo                   :创建一个会话 demo
+tmux detach                        :断开当前会话 demo 仍在后台运行
+Ctrl+d 或 tmux kill-session -t demo:断开当前会话 demo 结束运行              tmux kill-server # 关闭服务器，所有的会话都将关闭
+
+tmux a -t demo                     :进入一个已知会话 demo。                 tmux a # 默认进入第一个会话
+tmux ls                            :列出会话
+tmux attach-session                :重新附加到会话

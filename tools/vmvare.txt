@@ -1,0 +1,5 @@
+1.VMvare workstation 14无法共享文件夹时，需要安装VMware tools:
+	虚拟机->重新安装VMvare tools
+	挂载：mnt /etc/cdrom /mnt/iosrom
+	解压文件：tar -xzvf  mnt/isorom/VMwareTools-10.0.6-
+	进入解压后的目录，执行：sudo ./wmware-install.pl

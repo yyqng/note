@@ -1,0 +1,1 @@
+sqlplus zdzc/zdzc@localhost:1521/orcl

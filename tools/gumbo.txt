@@ -1,0 +1,8 @@
+1.安装：
+	git clone https://github.com/google/gumbo-parser
+	cd gumbo-parser
+	./autogen.sh
+	make
+	make install
+
+2.gumbo_parse_with_options

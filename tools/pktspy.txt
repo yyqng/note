@@ -1,0 +1,60 @@
+一、启动spider
+	gdb --args spider --port=7788
+    rm /dev/shm/shm1234
+    /spider --shmObjName=test
+
+二、调试spider
+	gdb --args spider --port=7788 --shmObjName=spider_result_01
+
+三、merge将任务发送到spider，产生.out文件位于spider目录下
+	pcap文件调试：    gdb --args merge --dataMode=1 --input=test.pcap
+	LZ文件调试：      gdb --args merge --type=2 --input=weiyun.html
+
+四、parser：结果输出到终端
+	curl命令输出文件调试：    gdb --args parser 5 test.html <ptType>
+	爬虫输出结果文件调试：    gdb --args parser 2 spider_result
+    gdb --args ./parser --mode=SpyFile --input=spider_test.spy
+
+ spy文件提取
+    bin/spyget taskid 0x5c975b00000000 spider_test.spy > huangguan.spy
+
+ html调试：
+    皇冠
+    gdb --args ./parser --runMode=SpyFile --input=mailcontact.spy            --productId=1010012 --action=0x00010400
+    gdb --args ./parser --runMode=RawFile --input=weiyun_LIST.txt            --productId=1280008 --action=0x00080100
+    gdb --args ./parser --runMode=RawFile --input=weiyun11url.html           --productId=1280008 --action=0x00080200
+    gdb --args ./parser --runMode=RawFile --input=weiyun_CONTENT.txt         --productId=1280008 --action=0x00080300
+    gdb --args ./parser --runMode=RawFile --input=weiyungroup.html           --productId=1280008 --action=0x00080400
+    gdb --args ./parser --runMode=RawFile --input=weiyunuserinfo.html        --productId=1280008 --action=0x00010000
+    gdb --args ./parser --runMode=RawFile --input=weiyun11pdir_key.html      --productId=1280008 --action=0x00080500
+    NotSpec                  :  0x00
+    CLOUDDISK_FILE_LIST      :  0x0801
+    CLOUDDISK_FILE_CONTENT   :  0x0802
+    0                        :  0x00
+
+五、spyget taskid 0x1234 spider_out.spy -> out.spy
+
+六、向merge发数据：cat qq-web.pcap | nc localhost 9000 -v
+
+七、merge侦听指定端口：gdb --args ./merge 4 9000
+
+
+#define PRODUCT_QQMAIL         "2069000"
+
+apt install libssl-dev
+apt install boost-devel
+apt install libcurl4-openssl-dev
+
+启动管理：
+cp script/pktspyd /etc/init.d/pktspyd
+
+文件覆盖链接
+cp libclntsh.so.11.1 libclntsh.so
+cp libgumbo.so.1.0.0 libgumbo.so.1
+cp libgumbo.so.1.0.0 libgumbo.so
+cp libocci.so.11.1 libocci.so
+cp libiconv.so.2 libiconv.so
+cp libocci.so.11.1 libocci.so
+cp libhs_runtime.so.4.5.0 libhs_runtime.so.4
+cp libhs_runtime.so.4.5.0 libhs_runtime.so
+

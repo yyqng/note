@@ -1,0 +1,2 @@
+scp -P 22 -r www.runoob.com:/home/root/others/ /home/space/music/
+scp -P 22 -r /home/space/music/ www.runoob.com:/home/root/others/

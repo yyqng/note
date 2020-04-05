@@ -1,0 +1,5 @@
+Name: gsl
+Description:gsl pc file
+Version: 1.16
+Cflags:-I/usr/local/include/gsl
+Libs:-L/usr/local/lib -lgsl -lgslcblas

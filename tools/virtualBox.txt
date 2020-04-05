@@ -1,0 +1,9 @@
+1.安装GCC
+2.右键C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso,
+	装载它，在我的电脑下面就会出现一个虚拟DVD
+3.虚拟机运行窗口：设备→安装增强功能
+4.挂载：mkdir /mnt/vmboxDVD
+		mount  /dev/cdrom  /mnt/vmboxDVD
+5.VirtualBOX设置共享文件夹路径，自定义共享文件夹名称为VMshare
+6.挂载：mkdir /mnt/myshare
+		mount -t vboxsf VMshare  /mnt/myshare

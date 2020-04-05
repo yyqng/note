@@ -1,0 +1,88 @@
+apt-get:
+    etc/apt/sources.list格式：  deb [web或ftp地址] [发行版名字] [main/contrib/non-free]
+    更新软件包列表：            apt-get update
+    安装：                      apt-get install packagename
+    查看软件nano：              dpkg -l nano
+    卸载（保留配置文件）：      apt-get remove packagename
+    卸载（删除配置文件）：      apt-get –purge remove packagename
+    删除你已经卸载的软件的备份：apt-get autoclean apt
+    删除安装的软件的备份：      apt-get clean
+    更新所有已安装的软件包：    apt-get upgrade
+    将系统升级到新版本：        apt-get dist-upgrade
+    清除已卸载的软件的.deb文件: apt-get autoclean
+    删除所有.deb文件:           apt-get clean
+
+
+二、安装依赖库：
+	1.查找依赖库so文件包含在什么rpm包中需使用yum-utils
+		yum -y install yum-utils
+	2.下载软件libgcc的所有rpm包，可以直接执行：
+		yumdownloader libgcc
+	3.查找libpng15.so.15是在哪个包里面，就可以i执行命令：
+		yum whatprovides libpng15.so.15
+	4.继而安装：
+		yum -y install libpng
+
+
+三、tar打包的应用软件
+	1.安装：
+　　　　解压缩文件：gz格式：“tar –xvzf 包名”。其他格式则先用解压软件，再执行：tar –xvf tar包；
+　　　　阅读附带的INSTALL文件、README文件；
+　　　　./configure”
+　　　　make
+　　　　make install
+　　　　make clean
+　　　　一般可执行文件会存放在/usr/local/bin目录下！如果有例外， INSTALL和README一般都会有说明。
+　　2. 卸载：
+　　　　Kinstall和Kife，可用于tar包安装、卸载。
+　　
+四、 deb包
+  　1. 安装：dpkg –i software-1.2.3-1.deb
+		同时安装：rpm –ivh **.rpm **.rpm **.rpm
+    2. 卸载：dpkg –e software
+   
+五、批量安装：
+	1.查看可能批量安装的列表： yum grouplist
+	2.安装程序组group1：       yum groupinsall group1
+
+六、redhat7 配置163 yum源
+	1.删除原先的源	
+		cd /etc/yum.repos.d/
+		rm -f *
+	2.添加（必须以repo结尾）
+		vim mirrors.163.com.repo，添加：
+		    [mirrors.163.com.repo] #这里是yum源的名，保持跟文件名一致
+		    name=mirrors.163.com.repo #yum的备注，随便起都无所谓
+		    enabled=1 #是否启用本配置（0：不使用，1：使用），使用中的配置只有一个
+		    gpgcheck=1 #是否检测yum源的签名，防止软件安装的软件被篡改（0：不验证，1：验证，默认为1）
+            #yum签名秘钥的地址，如果gpgcheck=1，这里必须要填，文件名格式为RPM-GPG-KEY-系统版本
+		    gpgkey=http://mirrors.163.com/centos/7/os/x86_64/RPM-GPG-KEY-CentOS-7 
+	3.检查配置是否正确
+		yum repolist 
+	4.更新yum缓存,显示yum软件包
+		yum list
+	5.安装 yum install ***
+		强制安装：
+		rpm -i *** --force --nodeps
+	6.命令添加yum源（软件比较多）：
+		rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+		yum-config-manager --add-repo http://jenkins.mono-project.com/repo/centos/
+
+八、rpm包
+　　1. 安装：                 rpm –ivh software-1.2.3-1.i386.rpm
+　　2. 查询所有安装的软件包： rpm -q -a
+    3. 卸载                   rpm –e software
+　　3. 忽略依赖关系的卸载：   rpm -e [package name] -nodeps
+　　4. 卸载预演(不真正卸载)， rpm -e [package name] -test
+    5.两个包相互依赖，则同时安装
+        rpm -ivf perl-Git-1.7.1-2.el6_0.1.noarch.rpm git-1.7.1-2.el6_0.1.x86_64.rpm
+
+	6、安装依赖库：
+		1.查找依赖库so文件包含在什么rpm包中需使用yum-utils
+			yum -y install yum-utils
+		2.下载软件libgcc的所有rpm包，可以直接执行：
+			yumdownloader libgcc
+		3.查找libpng15.so.15是在哪个包里面，就可以i执行命令：
+			yum whatprovides libpng15.so.15
+		4.继而安装：
+			yum -y install libpng

@@ -1,0 +1,29 @@
+一、权限管理
+	#普通用户yyqng使用sudo命令：
+		visudo
+		#添加一行
+		yyqng ALL=(ALL)  ALL
+
+	fedaro 28安装时没有设置root密码，重置root密码：
+		sudo passwd root
+
+二、用户管理
+	1.查看系统用户cat /etc/passwd	
+	2.查看系统用户cat /etc/group
+	3.创建组groupadd usbfs
+	4.添加组成员useradd -G usbfs yuyq
+	5.更改密码passwd
+	6.添加用户useradd [-d home] [-s shell] [-c comment] [-m [-k template]] [-f inactive] [-e expire ] [-p passwd] [-r] name
+	7.查看当前登录用户：w
+	8.kill某个用户的所有进程:pkill -u yuyq
+    9.查看僵尸进程（defunct ）的父进程，杀死父进程即可结束僵尸进程：
+        ps -xal
+        kill -9 ppid 
+    10.彻底删除用户
+        userdel -r test
+    11.设置第一次登陆必须修改密码
+        chage -d0 test
+
+三、登陆提示信息文件：
+    /etc/motd
+

@@ -1,0 +1,924 @@
+
+前言
+修订记录
+如何贡献
+第01章、Docker 简介
+1.1 什么是 Docker
+  Docker 在容器的基础上，进行了进一步的封装，
+  从文件系统、网络互联到进程隔离等等，极大的
+  简化了容器的创建和维护。容器内的应用进程
+  直接运行于宿主的内核，容器内没有自己的内核，
+  而且也没有进行硬件虚拟。因此容器要比传统
+  虚拟机更为轻便。
+1.2 为什么要用 Docker
+  (1) 更高效的利用系统资源 (2) 更快速的启动时间 
+  (3) 一致的运行环境       (4) 持续交付和部署:  
+      Dockerfile  持续集成(Continuous Integration) 
+  (5) 更轻松的迁移         (6) 更轻松的维护和扩展
+  与虚拟机对比
+  特性        容器                虚拟机
+  启动        秒级                分钟级
+  硬盘使用    一般为 MB           一般为 GB
+  性能        接近原生            弱于
+  系统支持量  单机支持上千个容器  一般几十个
+
+第02章、基本概念
+2.1 镜像
+  (1) 相当于是一个 root 文件系统
+  (2) 分层存储:镜像只是一个虚拟的概念，
+      其实际体现是由一组文件系统组成，或者说，
+      由多层文件系统联合组成。镜像构建时，
+      会一层层构建，前一层是后一层的基础。
+      每一层构建完就不会再发生改变。
+2.2 容器
+  镜像是静态的定义，容器是镜像运行时的实体。
+  容器可以被创建、启动、停止、删除、暂停等。
+  容器的实质是进程，但运行于属于自己的独立的
+  命名空间。容器内的进程是运行在一个隔离的
+  环境里，使用起来，就好像是在一个独立于宿主
+  的系统下操作一样。这种特性使得容器封装的
+  应用比直接在宿主运行更加安全。
+
+  容器存储层：
+  容器运行时，以镜像为基础层，在其上创建
+  的为容器运行时读写而准备的存储层。
+  生存周期和容器一样。
+  要保持无状态化。所有的文件写入操作，
+  都应该使用 数据卷（Volume）、或者绑定
+  宿主目录，在这些位置的读写会跳过容器
+  存储层，直接对宿主（或网络存储）发生读写，
+  其性能和稳定性更高。
+2.3 仓库
+  Docker Registry：
+  可以包含多个仓库（Repository）；
+  每个仓库可以包含多个标签（Tag）；
+  每个标签对应一个镜像。
+
+  镜像的版本：<仓库名>:<标签> ，例如：
+  ubuntu:16.04，默认为ubuntu:latest
+
+  仓库名：用户名/软件名，例如jwilder/ubuntu
+
+  Docker Registry 公开服务：
+  开放给用户使用、允许用户管理镜像的 Registry 服务。
+  例如：官方的 Docker Hub、 CoreOS 的 Quay.io、
+  时速云镜像仓库、网易云镜像服务、
+  DaoCloud 镜像市场、阿里云镜像库等。
+
+  加速器：国内的云服务商提供的针对 Docker Hub 的
+  镜像服务（Registry Mirror），
+  例如： 阿里云加速器、DaoCloud 加速器等
+  
+  私有 Docker Registry：
+  用户可以在本地搭建私有 Docker Registry.    
+            
+第03章、安装 Docker
+3.0 Docker 分为 CE 和 EE 两大版本。
+  CE 即社区版（免费，支持周期 7 个月），
+  EE 即企业版，强调安全，付费使用，支持周期 24 个月。
+  这里主要介绍 Docker CE 在 Linux 、
+  Windows 10 (PC) 和 macOS 上的安装。
+3.1 Ubuntu
+  Ubuntu 发行版中，LTS（Long-Term-Support）
+  长期支持版本更稳定
+  (1) apt-get remove docker \
+      docker-engine docker.io
+  (2) Ubuntu 14.04 可选内核模块:
+      一般建议安装可选内核模块包以使用 AUFS,
+      作为推荐的 Docker 存储层驱动
+      apt-get update
+      apt-get install \
+      linux-image-extra-$(uname -r) \
+      \linux-image-extra-virtual
+      Ubuntu 16.04 + 上的 Docker CE 默认使用 
+      overlay2 存储层驱动,无需手动配置。
+  (3) 由于 apt 源使用 HTTPS 以确保软件下载
+      过程中不被篡改。因此，我们首先需要添加
+      使用 HTTPS 传输的软件包以及 CA 证书。
+      apt-get update
+      apt-get install apt-transport-https \
+      ca-certificates curl software-properties-common
+  (4) 确认所下载软件包的合法性，
+      需要添加软件源的 GPG 密钥:
+      curl -fsSL https://mirrors.ustc.edu.cn/\
+      docker-ce/linux/ubuntu/gpg \
+      | sudo apt-key add -
+  (5) 需要向 source.list 中添加 Docker CE APT
+      稳定版软件源,  stable 可改为 test(测试版)
+      或者 nightly(每日构建版)
+      add-apt-repository "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+  (6) 更新 apt 软件包缓存，并安装 docker-ce：
+      apt-get update; apt-get install docker-ce
+  
+  脚本自动安装：
+  curl -fsSL get.docker.com -o get-docker.sh
+  sudo sh get-docker.sh --mirror Aliyun
+
+  启动：
+  sudo systemctl enable docker
+  sudo systemctl start docker
+
+  建立 docker 用户组:
+  docker 命令会使用 Unix socket 与 Docker 
+  引擎通讯。而只有 root 用户和 docker 组的用户
+  才可以访问 Docker 引擎的 Unix socket。
+  出于安全考虑，一般 Linux 系统上不会直接使用
+  root 用户。因此，更好地做法是将需要使用 
+  docker 的用户加入 docker 用户组。
+  sudo groupadd docker
+  sudo usermod -aG docker $USER
+  退出当前终端并重新登录，测试:
+  docker run hello-world
+3.2 Debian
+  向 source.list 中添加 Docker CE 软件源之后，
+  Debian 7 需要进行额外的操作：
+  编辑/etc/apt/sources.list将deb-src一行注释。
+3.3 CentOS
+    
+3.4 macOS
+3.5 镜像加速器
+  国内加速器服务，例如：  
+  Docker 官方提供的中国 registry mirror : 
+  https://registry.docker-cn.com  
+  七牛云加速器 : 
+  https://reg-mirror.qiniu.com/
+
+  Ubuntu 14.04、Debian 7 Wheezy 
+  ( 使用 upstart 的系统):
+  vim /etc/default/docker , 
+  DOCKER_OPTS 配置加速器地址：
+  DOCKER_OPTS="--registry-mirror=\
+  https://registry.docker-cn.com"
+  sudo service docker restart
+
+  Ubuntu 16.04+、Debian 8+、CentOS 7 
+  ( 使用 systemd 的系统,包括Fedora )
+  vim /etc/docker/daemon.json
+  {
+   "registry-mirrors": [
+      "https://registry.docker-cn.com"
+  }
+  重新启动服务: sudo systemctl daemon-reload;
+  sudo systemctl restart docker
+  验证： docker info;
+  出现：https://registry.docker-cn.com/
+
+第04章、使用镜像
+4.1获取镜像
+  docker pull [选项] \
+  [Docker Registry 地址[:端口号]/]仓库名[:标签]
+  对于 Docker Hub，如果不给出用户名，
+  则默认为 library，也就是官方镜像,
+  例如：sudo docker pull ubuntu:18.04 
+  会获取官方镜像library/ubuntu中标签为18.04的镜像
+  运行： docker run -it --rm ubuntu:18.04 bash
+  退出：exit
+4.2 列出镜像
+  sudo docker image list
+  查看镜像、容器、数据卷所占用的空间: 
+  docker system df
+  显示虚玄镜像：docker image ls -f dangling=true
+  删除虚悬镜像：docker image prune
+
+  显示中间层镜像：docker image ls -a; 
+  无标签的，这些镜像不应该删除 
+
+  列出部分景象：docker image ls ubuntu    
+      docker image ls ubuntu:18.04
+  表格等距显示，有标题行和自己定义列：
+  sudo docker image ls --format \
+  "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"
+4.3 删除本地镜像
+  docker image rm [选项] <镜像1> [<镜像2> ...]
+  docker image rm 501（ID）
+  docker image rm centos（可能只是取消某个标签）
+  使用摘要删除：
+  docker image ls --digests
+  docker image rm node@sha256:b4f0e0b......
+  容器是以镜像为基础，再加一层容器存储层，
+  因此如果容器是不需要的，应该先将它们删除，
+  然后再来删除镜像。
+  删除所有仓库名为 redis 的镜像: 
+  docker image rm $(docker image ls -q redis)
+  删除所有在 mongo:3.2 之前的镜像：
+  docker image rm $(docker image ls -q -f \
+  before=mongo:3.2)
+
+  Ubuntu/Debian 上有 UnionFS 可以使用，
+  如 aufs 或者 overlay2，CentOS 和 RHEL 
+  的内核中没有相关驱动。一般使用 devicemapper 
+  + direct-lvm(不要使用loop-lvm :性能比较差，
+  稳定性不好，配置相对复杂,稀疏文件空间难以释放）
+4.4 利用 commit 理解镜像构成
+  定制镜像应该使用 Dockerfile 来完成
+
+  定制一个 Web 服务器为例子:
+  (1) docker run --name webserver -d -p 80:80 nginx
+  (2) 访问http://localhost  Nginx欢迎页面。
+  (3) 进入容器:
+      docker exec -it webserver bash
+  (4) 改变欢迎页面内容：
+      echo '<h1>Hello, Docker!</h1>' > /usr/share/nginx/html/index.html;exit
+  (5) 查看具体的改动： 
+      docker diff webserver
+  (6) 将容器的存储层保存下来成为镜像: 
+      docker commit [选项] <容器ID或\
+      容器名> [<仓库名>[:<标签>]]
+      docker commit --author "yyqng \
+      <yyqng@qq.com>" --message "修改了\
+      默认网页" webserver nginx:v2
+  (7) 查看镜像内的历史记录: 
+      docker history nginx:v2
+  (8) 运行镜像nginx:v2 : 
+      docker run --name web2 -d -p 81:80 nginx:v2
+  (9) 访问 http://localhost:81 看到结果，
+      其内容应该和之前修改后的 webserver 一样
+  慎用 docker commit : docker diff webserver
+  可以发现大量的无关内容被添加进来，如果不小心
+  清理，将会导致镜像极为臃肿，每一次修改都会
+  让镜像更加臃肿一次。docker commit 所有对镜像的
+  操作都是黑箱操作，生成的镜像也被称为黑箱镜像。
+  
+4.5 使用 Dockerfile 定制镜像
+  FROM: 指定基础(官方服务类/基础的操作系统/
+  空白scratch)镜像
+
+  RUN: 执行命令行命令。使用 && 将命令串联起来,
+  使多层镜像简化为1层。每一层构建的最后一定要
+  清理掉无关文件。
+
+  构建镜像：在 Dockerfile 文件所在目录执行：
+  docker build -t nginx:v3 . (.指定上下文路径)
+  上下文路径: docker 命令是客户端工具，
+  通过Docker引擎(也就是服务端守护进程)提供的
+  REST API与其交互。
+  
+  COPY ./package.json /app/ package.json
+  必须在上下文目录中。.dockerignore 文件用于
+  剔除不需要传递给 Docker 引擎的文件。
+
+  直接用 Git repo 进行构建： 
+  docker build https://github.com/twang2218/\
+  gitlab-ce-zh.git#:8.14
+
+  用给定的 tar 压缩包构建： 
+  docker build http://server/context.tar.gz
+
+  从标准输入中读取 Dockerfile 进行构建： 
+  docker build - < Dockerfile 或 cat Dockerfile \
+  | docker build -
+
+  从标准输入中读取上下文压缩包进行构建： 
+  docker build - < context.tar.gz
+  
+4.6 Dockerfile 指令详解
+ 4.6.1 COPY 复制文件 
+  COPY <上下文目录源路径>... <镜像内目标路径>
+  COPY package.json /usr/src/app/
+  COPY hom* /mydir/
+  COPY hom?.txt /mydir/
+  注：镜像内目标路径工作目录可以用 
+  WORKDIR 指令来指定
+
+  COPY ["<源路径1>",... "<目标路径>"]
+
+ 4.6.2 ADD 更高级的复制文件
+  <源路径> 可以是一个 URL,如果 <源路径> 
+  为一个 tar 压缩文件的话，压缩格式为 gzip,
+  bzip2 以及 xz 的情况下，ADD 指令将会自动
+  解压缩这个压缩文件到 <目标路径> 去。
+  尽可能的使用 COPY,最适合使用 ADD 的场合，
+  就是所提及的需要自动解压缩的场合。
+
+ 4.6.3 CMD 容器启动命令
+  CMD 指令的格式和 RUN 相似，也是两种格式：
+  shell：CMD <命令>
+  CMD echo $HOME 实际会被包装为参数的形式：
+  CMD [ "sh", "-c", "echo $HOME" ]
+
+  推荐使用格式：
+  exec ：CMD ["可执行文件","参数1","参数2"...]
+  (解析为JSON数组，因此一定要使用双引号")
+
+  参数列表格式：CMD ["参数1", "参数2"...]。
+  在指定了ENTRYPOINT指令后,用CMD指定具体的参数。
+  例如：
+  docker run -it ubuntu cat /etc/os-release。
+  这就是用 cat /etc/os-release 命令替换了默认的
+  /bin/bash 命令了，输出了系统版本信息。
+
+  Docker 不是虚拟机，容器中的应用都应该以
+  前台执行，容器内没有后台服务的概念。
+  CMD service nginx start 会被理解为：
+  CMD [ "sh", "-c", "service nginx start"]
+  主进程是 sh。那么当 service nginx start 
+  命令结束后，sh 也就结束了，sh 作为主进程
+  退出了，就会令容器退出。
+
+  正确的做法是直接执行 nginx 可执行文件，
+  并且要求以前台形式运行：
+  CMD ["nginx", "-g", "daemon off;"]
+
+ 4.6.4 ENTRYPOINT 入口点
+  ENTRYPOINT 的目的和 CMD 一样,需要通过 
+  docker run 的参数 --entrypoint 来指定。
+  当指定了 ENTRYPOINT 后，CMD 的内容作为
+  参数传给 ENTRYPOINT 指令，实际执行：
+  <ENTRYPOINT> "<CMD>"
+
+  场景一：让镜像变成像命令一样使用
+  FROM ubuntu:16.04
+  RUN apt-get update \
+      && apt-get install -y curl \
+      && rm -rf /var/lib/apt/lists/*
+  CMD [ "curl", "-s", "http://ip.cn" ]
+  构建镜像：docker build -t myip .
+  查询当前公网 IP： docker run myip
+  如果我们希望加入 -i 这参数：
+  docker run myip curl -s http://ip.cn -i
+  使用ENTRYPOINT替换上面的CMD后，直接使用 
+  docker run myip -i
+
+  场景二：应用运行前的准备工作
+  启动主进程前，需要一些准备工作；
+  以 root 身份执行一些必要的准备工作，
+  最后切换到服务用户身份启动服务。
+  
+ 4.6.5 ENV 设置环境变量
+  ENV <key> <value>
+  ENV <key1>=<value1> <key2>=<value2>...
+  例如：ENV VERSION=1.0 NAME="Happy Feet"
+
+ 4.6.6 ARG 构建参数
+  ARG <参数名>[=<默认值>]
+  ARG 所设置的构建环境的环境变量，
+  在将来容器运行时是不会存在的。
+  ARG 指令是定义参数名称的默认值，
+  可以在构建命令 docker build 中用 
+  --build-arg <参数名>=<值> 来覆盖。
+
+ 4.6.7 VOLUME 定义匿名卷
+  VOLUME ["<路径1>", "<路径2>"...]
+  VOLUME <路径> 例如  VOLUME /data
+  覆盖挂载设置：
+  docker run -d -v mydata:/data xxxx
+  使用命名卷mydata挂载到了 /data 这个位置
+
+ 4.6.8 EXPOSE 暴露端口
+  EXPOSE <端口1> [<端口2>...]
+  声明运行时容器提供服务端口
+  docker network 通过自定义网络
+  可以很轻松的实现容器间的互联与隔离。
+
+ 4.6.9 WORKDIR 指定工作目录
+  WORKDIR <工作目录路径>
+  使用 WORKDIR 指令可以来指定工作目录,
+  以后各层的当前目录就被改为指定的目录，
+  如该目录不存在，WORKDIR 会帮你建立目录。
+
+ 4.6.10 USER 指定当前用户
+  USER <用户名> :USER 指令和 WORKDIR 相似，
+  都是改变环境状态并影响以后的层。
+  USER 是改变之后层的执行 RUN, CMD 以及 
+  ENTRYPOINT 这类命令的身份。
+  #设置CMD，使用gosu切换身份
+  CMD [ "exec", "gosu", "redis", "redis-server" ]
+
+ 4.6.11 HEALTHCHECK 健康检查
+  HEALTHCHECK [选项] CMD <命令>
+  HEALTHCHECK NONE :屏蔽基础镜像健康检查
+  HEALTHCHECK 支持下列选项：
+   --interval=<间隔>：
+    两次健康检查的时间间隔，默认为 30 秒；
+   --timeout=<时长>:
+    健康检查命令运行超时时间，
+    超时视为失败，默认 30 秒；
+   --retries=<次数>:
+    当连续失败指定次数后，则将容器状态
+    视为 unhealthy，默认 3 次。
+
+  和 CMD, ENTRYPOINT 一样，HEALTHCHECK 
+  只可以出现一次，如果写了多个，只有
+  最后一个生效。
+
+  示例Dockerfile：
+  FROM nginx
+  RUN apt-get update && apt-get install -y curl \
+  && rm -rf /var/lib/apt/lists/*
+  HEALTHCHECK --interval=5s --timeout=3s \
+  CMD curl -fs http://localhost/ || exit 1
+  $ docker build -t myweb:v1 .
+  $ docker run -d --name web -p 80:80 myweb:v1
+  查看健康状态：
+  $ docker inspect --format '{{json .State.Health}}' \
+  web | python -m json.tool
+
+ 4.6.12 ONBUILD 为他人作嫁衣裳
+  ONBUILD <其它指令>
+  其它指令在当前镜像构建时并不会被执行。
+  只有当以当前镜像为基础镜像，
+  去构建下一级镜像的时候才会被执行。
+  是为了帮助别人定制自己而准备的。
+ 4.6.13 参考文档
+  
+4.7 多阶段构建
+ 之前的做法:
+ 在 Docker 17.05 版本之前，我们构建 Docker 镜像时，
+ 通常会采用两种方式：
+ (1) 全部放入一个 Dockerfile
+  问题：维护性降低；镜像层次多，镜像体积较大，
+   部署时间变长；源代码存在泄露的风险
+ (2) 分散到多个 Dockerfile
+  规避第一种方式存在的风险，但明显部署过程较复杂。
+
+ 为解决以上问题，Docker v17.05 开始支持多阶段构建
+ 
+4.8 其它制作镜像的方式
+ 从 rootfs 压缩包导入
+  docker import [选项] <文件>|<URL>|- [<仓库名>[:<标签>]]
+  压缩包可以是本地文件、远程 Web 文件，
+  甚至是从标准输入中得到。压缩包将会在
+  镜像 / 目录展开，并直接作为镜像第一层提交。
+
+ docker save 和 docker load，不推荐此方法：
+  $ docker image ls alpine
+  $ docker save alpine | gzip > alpine-latest.tar.gz
+  复制alpine-latest.tar.gz 到另一个机器
+  $ docker load -i alpine-latest.tar.gz
+  现在推荐镜像迁移直接使用 Docker Registry，
+  无论是直接使用 Docker Hub 还是使用内网私有 
+  Registry 都可以。
+
+第05章、操作容器
+5.1 启动
+ 新建并启动:
+ 下面的命令输出一个 “Hello World”，之后终止容器:
+  $ docker run ubuntu:14.04 /bin/echo 'Hello world'
+ 下面的命令则启动一个 bash 终端，允许用户进行交互:
+  $ docker run -t -i ubuntu:14.04 /bin/bash
+  -t 选项让Docker分配一个伪终端（pseudo-tty）
+  并绑定到容器的标准输入上，
+  -i 则让容器的标准输入保持打开。
+
+ docker run 来创建容器时，
+ Docker 在后台运行的标准操作包括：
+  检查本地是否存在指定的镜像，不存在就从公有仓库下载
+  利用镜像创建并启动一个容器
+  分配一个文件系统，并在只读的镜像层外面挂载一层可读写层
+  从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去
+  从地址池配置一个 ip 地址给容器
+  执行用户指定的应用程序
+  执行完毕后容器被终止
+
+ 启动已终止容器:
+  docker container start
+
+5.2 守护态运行
+ 不使用 -d 参数运行容器,容器会把输出的结果 
+ (STDOUT) 打印到宿主机上面
+ 如果使用了 -d 参数运行容器,输出结果可以用 
+  docker logs ID 或 docker container logs ID 查看:
+  docker run -d ubuntu:17.10 /bin/sh -c \
+  "while true; do echo hello world; sleep 1; done"
+
+5.3 终止
+ docker container ls -a
+ docker container stop ID
+ docker container start ID 
+ docker container restart ID 
+5.4 进入容器
+ attach 命令:
+  docker run -dit ubuntu:14.04
+  docker container ls
+  docker attach cc2
+  如果从这个 stdin 中 eixt 将导致容器终止
+
+ exec 命令:
+  docker run -dit ubuntu:14.04
+  docker container ls
+  docker exec -it ID bash
+  如果从这个 stdin 中 exit，不会导致容器的停止。
+  所以使用 docker exec。
+  
+5.5 导出和导入
+  导出容器快照文件到本地：
+  docker container ls -a
+  docker export 7691a814370e > ubuntu.tar
+  从容器快照文件中再导入为镜像：
+  cat ubuntu.tar | docker import - test/ubuntu:v1.0
+  docker import http://example.com/exampleimage.tgz example/imagerepo
+
+  docker import：导入一个容器快照到本地镜像库
+   仅保存容器当时的快照状态
+  docker load:导入镜像存储文件到本地镜像库
+   将保存完整记录，体积也要大
+5.6 删除
+  docker container rm ImageName
+  删除一个运行中的容器:
+  docker container rm -f ImageName
+  清理所有处于终止状态的容器：
+  docker container ls -a
+  docker container prune
+
+第06章 访问仓库
+ 仓库（Repository）是集中存放镜像的地方。
+ 注册服务器（Registry）是管理仓库的具体服务器。
+ 例如对于仓库地址 dl.dockerpool.com/ubuntu 来说，
+ dl.dockerpool.com 是注册服务器地址，ubuntu 是仓库名。
+6.1 Docker Hub
+  命令行界面登录：docker login
+  退出登录：docker logout
+  查找官方仓库中的镜像:docker search centos
+  centos:由 Docker 公司创建的基础镜像或根镜像
+  tianon/centos：由 Docker 的用户tianon创建并维护
+  --filter=stars=N：仅显示收藏数量为 N 以上的镜像
+  拉取镜像：docker pull centos
+  推送：
+   docker tag ubuntu:17.10 username/ubuntu:17.10
+   docker image ls
+   docker push username/ubuntu:17.10
+   docker search username
+  自动创建:
+   允许用户通过 Docker Hub 指定跟踪一个目标网站
+   (目前支持 GitHub 或 BitBucket)上的项目，一旦
+   项目发生新的提交或者创建新的标签(tag)，
+   Docker Hub 会自动构建镜像并推送到Docker Hub中。
+
+   配置自动创建的步骤：
+    创建并登录 Docker Hub，以及目标网站；
+    在目标网站中连接帐户到 Docker Hub；
+    在 Docker Hub 中 配置一个自动创建；
+    选取一个目标网站中的项目(需要含 Dockerfile)和分支；
+    指定 Dockerfile 的位置，并提交创建。
+
+6.2 私有仓库
+ 安装运行 docker-registry
+  docker run -d -p 5000:5000 --restart=always \
+  --name registry registry
+ 容器的默认创建目录：/var/lib/registry
+ 可以通过 -v 参数指定目录：/opt/data/registry
+  docker run -d -p 5000:5000 \
+  -v /opt/data/registry:/var/lib/registry \
+  registry
+ 在私有仓库上传、搜索、下载镜像
+  docker image ls
+  docker tag ubuntu:latest \
+  127.0.0.1:5000/ubuntu:latest
+  docker push 127.0.0.1:5000/ubuntu:latest
+  用 curl 查看仓库中的镜像:
+   curl 127.0.0.1:5000/v2/_catalog
+  docker image rm 127.0.0.1:5000/ubuntu:latest
+  docker pull 127.0.0.1:5000/ubuntu:latest
+  docker image ls
+
+ 内网地址作为私有仓库地址，须设置允许非
+ HTTPS 方式推送镜像。
+ 使用 upstart 的系统，编辑 /etc/default/docker
+ DOCKER_OPTS="--registry-mirror=https://registry.docker-cn.com \
+ --insecure-registries=192.168.199.100:5000"
+ 使用 systemd 的系统，编辑/etc/docker/daemon.json：
+ {
+  "registry-mirror": [
+    "https://registry.docker-cn.com"
+  ],
+  "insecure-registries": [
+    "192.168.199.100:5000"
+  ]
+ }
+ 
+6.3 私有仓库高级设置
+ 准备站点证书：
+ 一、创建 CA 私钥
+  openssl genrsa -out "root-ca.key" 4096
+ 二、利用私钥创建 CA 根证书请求文件
+  openssl req \
+          -new -key "root-ca.key" \
+          -out "root-ca.csr" -sha256 \
+          -subj '/C=CN/ST=Guangdong/L=Tianhe/O=Huizhi/CN=Huizhi Docker Registry CA'
+ 三、配置 CA 根证书，新建 root-ca.cnf
+  [root_ca]
+  basicConstraints = critical,CA:TRUE,pathlen:1
+  keyUsage = critical, nonRepudiation, cRLSign, keyCertSign
+  subjectKeyIdentifier=hash
+ 四、签发根证书
+  openssl x509 -req  -days 3650 \
+  -in "root-ca.csr" -signkey "root-ca.key" \
+  -sha256 -out "root-ca.crt" \
+  -extfile "root-ca.cnf" -extensions root_ca
+ 五、生成站点 SSL 私钥
+  openssl genrsa -out "docker.domain.com.key" 4096
+ 六、使用私钥生成证书请求文件
+  openssl req -new -key "docker.domain.com.key" -out "site.csr" -sha256 \
+          -subj '/C=CN/ST=Guangdong/L=Tianhe/O=Huizhi/CN=docker.domain.com'
+ 七、配置证书，新建 site.cnf 文件
+  [server]
+  authorityKeyIdentifier=keyid,issuer
+  basicConstraints = critical,CA:FALSE
+  extendedKeyUsage=serverAuth
+  keyUsage = critical, digitalSignature, keyEncipherment
+  subjectAltName = DNS:docker.domain.com, IP:127.0.0.1
+  subjectKeyIdentifier=hash
+ 八、签署站点 SSL 证书
+  openssl x509 -req -days 750 -in "site.csr" \
+  -sha256 -CA "root-ca.crt" -CAkey "root-ca.key" \
+  -CAcreateserial -out "docker.domain.com.crt" \
+  -extfile "site.cnf" -extensions server
+
+ 配置私有仓库:
+ 私有仓库默认的配置文件位于 
+ /etc/docker/registry/config.yml(见docker-cfg目录)，
+ 我们先在本地编辑config.yml，之后挂载到容器中。
+
+ 生成 http 认证文件:
+ mkdir auth
+ docker run --rm --entrypoint htpasswd registry \
+ -Bbn username password > auth/nginx.htpasswd
+
+ 编辑 docker-compose.yml(见docker-cfg目录)
+
+ 修改 hosts：vim /etc/hosts：
+ 127.0.0.1 docker.domain.com
+
+ 启动：docker-compose up -d
+
+ 测试私有仓库功能：
+ sudo mkdir -p /etc/docker/certs.d/docker.domain.com
+ sudo cp ssl/root-ca.crt \
+ /etc/docker/certs.d/docker.domain.com/ca.crt
+ docker login docker.domain.com
+ docker pull ubuntu:18.04
+ docker tag ubuntu:18.04 docker.domain.com/username/ubuntu:18.04
+ docker push docker.domain.com/username/ubuntu:18.04
+ docker image rm docker.domain.com/username/ubuntu:18.04
+ docker pull docker.domain.com/username/ubuntu:18.04
+ docker logout docker.domain.com
+ docker push docker.domain.com/username/ubuntu:18.04
+ 如果你本机占用了 443 端口，可以配置 Nginx 代理
+
+    配置文件
+第07章、数据管理
+ 7.1 数据卷
+  一个可供一个或多个容器使用的特殊目录;
+  数据卷 可以在容器之间共享和重用
+  对 数据卷 的修改会立马生效
+  对 数据卷 的更新，不会影响镜像
+  数据卷 默认会一直存在，即使容器被删除
+
+  创建、查看：
+  docker volume create my-vol
+  docker volume ls
+  docker volume inspect my-vol
+
+  启动：
+  docker run -d -P --name web \
+    -v my-vol:/wepapp \
+    training/webapp \
+    python app.py
+
+  查看数据卷的具体信息:
+  docker inspect web
+  删除数据卷：
+  docker volume rm my-vol
+  清理数据卷
+  docker volume prune
+
+ 7.2 挂载主机目录
+  docker run -d -P \
+    --name web \
+    -v /src/webapp:/opt/webapp \
+    training/webapp \
+    python app.py
+
+  查看数据卷的具体信息
+  docker inspect web
+
+        数据卷容器
+        备份、 恢复、 迁移数据卷
+第08章、使用网络
+8.1 外部访问容器
+ -P:随机映射一个 49000~49900 的端口到
+    内部容器开放的网络端口
+ docker run -d -P training/webapp python app.py
+ docker container ls
+ docker logs -f nostalgic_morse
+
+ 映射所有接口地址:
+
+8.2 容器互联
+ 新建网络:docker network create -d bridge my-net
+ docker run -it --rm --name busybox1 --network my-net busybox sh
+ docker run -it --rm --name busybox2 --network my-net busybox sh
+ 在 busybox1 容器中：ping busybox2
+
+8.3 配置 DNS
+ 
+第09章、高级网络配置
+9.1 快速配置指南
+ 
+9.2 配置 DNS
+9.3 容器访问控制
+9.4 端口映射实现
+9.5 配置 docker0 网桥
+9.6 自定义网桥
+9.7 工具和示例
+9.8 编辑网络配置文件
+9.9 实例： 创建一个点到点连接
+
+第10章 Docker 三剑客之 Compose 项目
+ 10.1 简介
+  定义和运行多个 Docker 容器的应用.
+  服务:一个应用的容器
+  项目:由一组关联的应用容器组成的一个完整业务单元
+     ，在 docker-compose.yml 文件中定义
+ 10.2 安装
+  Linux二进制包安装：
+  $ sudo curl -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+  $ sudo chmod +x /usr/local/bin/docker-compose
+  卸载:如果是二进制包方式安装的，删除二进制文件
+
+ 10.3 使用：
+  新建文件夹，在该目录中编写 app.py 文件
+  编写 Dockerfile 文件
+  编写 docker-compose.yml 文件
+  运行 compose 项目:$ docker-compose up
+
+ 10.4 Compose 命令说明
+  构建（重新构建）项目中的服务容器:
+   docker-compose build [options] [SERVICE...]
+  config、down、exec、help、images、kill、logs、
+  pause、port、ps、pull、restart、rm、run、scale
+  start、stop、top、unpause、up
+
+ 10.5 Compose 模板文件
+  docker-compose.yml:
+  build、arg、cache_from、cap_add、cap_drop、
+  command、configs、cgroup_parent、container_name、
+  deploy、devices、depends_on、dns、dns_search、
+  tmpfs、env_file、environment、expose、
+  external_links、extra_hosts、healthcheck、image、
+  labels、logging、network_mode、networks、pid、
+  ports、secrets、security_opt、stop_signal、
+  sysctls、ulimits、volumes。
+  此外，还有包括 domainname, entrypoint, hostname,
+  ipc, mac_address, privileged, read_only, shm_size,
+  restart, stdin_open, tty, user, working_dir 等指令，
+  基本跟 docker run 中对应参数的功能一致。
+  读取变量：
+
+ 10.6 使用 Django
+ 
+第11章 Docker 三剑客之 Machine 项目
+ 快读创建docker集群环境
+ 安装： 
+  $ sudo curl -L https://github.com/docker/machine/releases/download/v0.13.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine
+  $ sudo chmod +x /usr/local/bin/docker-machine
+  $ docker-machine -v
+ 使用:
+  通过 env 命令来让后续操作对象都是目标主机。
+  $ docker-machine env test
+  通过 SSH 登录到主机:
+  $ docker-machine ssh test
+
+  active、config、create、env、inspect、ip
+  kill、ls、provision、regenerate-certs、
+  restart、rm、ssh、scp、mount、start、
+  status、stop、upgrade、url、version、help
+
+第12章 Docker 三剑客之 Swarm mode
+ 提供 Docker 容器集群服务，使用它，用户可以
+ 将多个 Docker 主机封装为单个大型的虚拟 
+ Docker 主机，快速打造一套容器云平台。
+ 12.1 基本概念：
+  管理节点:用于 Swarm 集群的管理;
+    一个 Swarm 集群可以有多个管理节点，
+    但只有一个管理节点可以成为 leader，
+    leader 通过 raft 协议实现。
+  工作节点:是任务执行节点，管理节点
+      将服务 (service) 下发至工作节点执行。
+      管理节点默认也作为工作节点。
+  任务:Swarm 中的最小的调度单位,即一个容器
+  服务：一组任务的集合。
+   replicated services：运行指定个数的任务
+   global services：每个工作节点上运行一个任务
+ 12.2 创建 Swarm 集群
+  初始化集群：
+   docker-machine create -d virtualbox manager
+   docker-machine ssh manager
+   #似乎不支持：
+   docker swarm init --advertise-addr 192.168.99.100
+   docker swarm join
+   
+第13章、安全
+ 13.1 内核命名空间
+  当用 docker run 启动一个容器时，在后台 Docker
+  为容器创建了一个独立的命名空间和控制组集合。
+ 13.2 控制组
+  资源的审计和限制:
+  确保了当容器内的资源使用产生压力时不会
+  连累主机系统
+ 13.3 服务端防护
+  确保只有可信的用户才可以访问 Docker 服务。
+  终极目标是改进 2 个重要的安全特性：
+
+  将容器的 root 用户映射到本地主机上的非 root 用户，
+  减轻容器和主机之间因权限提升而引起的安全问题；
+  允许 Docker 服务端在非 root 权限下运行，利用
+  安全可靠的子进程来代理执行需要特权权限的操作。
+ 13.4 内核能力机制
+  将权限划分为更加细粒度的操作能力。
+  大部分情况下，容器并不需要“真正的” root
+  权限，容器只需要少数的能力即可，禁用权限：
+   完全禁止任何 mount 操作；
+   禁止直接访问本地主机的套接字；
+   禁止访问一些文件系统的操作；
+   禁止模块加载。
+  Docker采用白名单机制，默认禁用必需功能之外的
+  其它权限。
+ 13.5 其它安全特性
+  Docker 当前默认只启用了能力机制,用户可以
+  采用多种方案来加强 Docker 主机的安全，例如:
+   在内核中启用 GRSEC 和 PAX;
+   使用一些有增强安全特性的容器模板，比如带
+   AppArmor 的模板和 Redhat 带 SELinux 策略的模板。
+   用户可以自定义访问控制机制来定制安全策略。
+ 13.6 总结
+  Docker 容器还是十分安全的，特别是在容器内不使用 
+  root 权限来运行进程的话。
+  另外，用户可以使用现有工具，比如 Apparmor,
+  SELinux, GRSEC 来增强安全性；甚至自己在内核中
+  实现更复杂的安全机制。
+第14章、底层实现
+ 核心技术:命名空间、控制组、Union 文件系统和
+ 容器格式。利用命名空间来做权限的隔离控制，
+ 利用 cgroups 来做资源分配
+ 14.1 命名空间
+  pid 命名空间:不同用户的进程就是通过此进行隔离
+  net 命名空间:每个 net 命名空间有独立的网络设备
+  ipc 命名空间：在 IPC 资源申请时加入命名空间信息
+  mnt 命名空间：
+  uts 命名空间：
+  user 命名空间：
+ 14.2 控制组
+  主要用来对共享资源进行隔离、限制、审计
+ 14.3 联合文件系统
+  分层、轻量级并且高性能的文件系统
+  不同 Docker 容器就可以共享一些基础的文件系统层，
+  同时再加上自己独有的改动层，大大提高了存储的效率。
+  overlay2 是目前 Docker 默认的存储驱动。
+ 14.4 容器格式
+  最初采用了 LXC ，从 1.11 开始，使用 runC
+  和 containerd。
+ 14.5 网络
+  基本原理:
+  Docker 中的网络接口默认都是虚拟的接口。
+  虚拟接口的优势之一是转发效率较高。
+  创建网络参数:
+   创建一对虚拟接口，分别放到本地主机和新容器中;
+   本地主机一端桥接到默认的 docker0 或指定网桥上，
+   并具有一个唯一的名字，如 veth65f9；
+   容器一端放到新容器中，并修改名字作为 eth0，
+   这个接口只在容器的命名空间可见；
+   从网桥可用地址段中获取一个空闲地址分配给容器的 
+   eth0，并配置默认路由到桥接网卡 veth65f9。
+  网络配置细节:
+   --net:
+  
+第15章、Etcd 项目
+        简介
+        安装
+        使用 etcdctl
+第16章、CoreOS 项目
+        简介
+        工具
+        快速搭建CoreOS集群
+第17章、Kubernetes 项目
+        简介
+        快速上手
+        基本概念
+        kubectl 使用
+        架构设计
+第18章、Mesos 项目
+        简介
+        安装与使用
+        原理与架构
+        配置项解析
+        常见框架
+第19章、容器与云计算
+        简介
+        亚马逊云
+        腾讯云
+        阿里云
+        小结
+附录
+附录一： 常见问题总结
+附录二： 热门镜像介绍
+        Ubuntu
+        CentOS
+        MySQL
+        MongoDB
+        Redis
+        Nginx
+        WordPress
+        Node.js
+附录三： Docker 命令查询
+附录四： 资源链接

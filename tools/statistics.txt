@@ -1,0 +1,56 @@
+´úÂëÐÐÊý£º
+    find demo/ -name "*.c*" |xargs cat|wc -l 
+    find demo/ -name "*.h*" |xargs cat|wc -l 
+regular:  sar/vmstat/ps/top ¡­
+	iostat Report Central Processing Unit (CPU) statistics and input/output statistics for devices, partitions and network filesystems (NFS).
+	netstat ¨Cnlpa | grep port
+	top ¨CH ¨Cp 
+	ps uxf
+	
+	pidstat
+	netstat
+	vmstat
+	iostat
+	mpstat
+
+	pstack
+	strace
+	gdb
+
+	top
+	ps
+	sar
+
+
+dynamic trace: perf/bcc/eBPF
+
+	strace: strace -ttt -F -p 489109 -e
+	ltrace
+	pstack => gdb (ptrace)
+
+	perf£ºperf record -gRa  -p 1
+	list -> find events
+	stat -> count them
+	record -> write event data to file
+	report -> browse summary
+	script -> event dump for post processing
+	./trace-cmd record -p function_graph -g dev_queue_xmit -O funcgraph-proc -F ping www.baidu.com -c 1
+	./trace-cmd report
+	./funcgrapth -m 2 do_nanosleep
+    
+	bpftrace
+	
+Linux Perf Analysis in 60s 
+	Uptime  (load avarages) 
+	dmesg | tail (kernel errors)
+	vmstat 1  (overall stats by time)
+	mpstat -P ALL 1  (cpu balance)
+	pidstat 1 (process uage)
+	iostat -xz 1 (disk io)
+	free -m (memory)
+	sar -n DEV 1 (network io)
+	sar -n TCP,ETCP 1 (tcp stats)
+	top (overview)
+trace-report
+
+special: sysbench etc.

@@ -1,0 +1,38 @@
+一、输入法：
+	设置-》区域和语言-》+ -》汉语（中国）-》添加
+	rhel7.4切换快捷键：
+		win+空格
+二、硬件时间：主板上电池供电时间；
+    查看：   hwclock 
+    设置：   hwclock -set -date
+
+三、系统时间
+    0.设置时区：tzselect
+    0.vim ~/.profile , 添加：
+        TZ='Asia/Shanghai'; export TZ
+    1.当前时间以秒显示
+        date -d "now" +%s
+    2.设置系统时间
+        date -s 06/06/2018
+        date -s 15:14:23
+        date -s “2016-4-18 15:14:23”
+    3.将秒显示为日期：
+        date -d @1415101567
+
+四、使用网络时间更新本地时间。
+    安装工具：                  yum -y install ntp ntpdate
+    设置系统时间与网络时间同步：ntpdate cn.pool.ntp.org
+    将系统时间写入硬件时间：    hwclock –systohc
+
+五、
+    mkdir /tmp/empty
+    rsync --delete-before -d /tmp/empty/ /the/folder/you/want/delete/
+
+六、系统语言
+    yum install kde-l10n-Chinese
+    locale -a|grep zh_CN
+    1.centos：vim /etc/locale.conf
+        LANG=en_US.UTF-8
+        LANG=zh_CN.UTF-8 
+	
+

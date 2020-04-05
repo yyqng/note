@@ -1,0 +1,293 @@
+
+一、Intro to ASML-Brion Products_Yanjun_Jul2016
+	1.From Design to Wafer
+		Design Mask Scanner Resist Wafer
+	2.From Design to Mask: Computational Lithography
+		Design Model(FEM+) OPC(OPC+) Verification(LMC) Mask
+	3.ASML holistic(整体的) lithography: links the scanner(扫描仪) to YieldStar metrology(计量) and computational lithography design context(背景)
+		1. Advanced lithography capability.
+		2. YieldStar Metrology and Control SW.
+		3. Computational Lithography Design context.
+		4. Process Window Enlargement : enables maximum imaging performance by maximizing process window. 
+			3D model:     masks, scanner optics(光学), resist and substrates
+			Tachyon SMO : FlexRay, FlexWave, 
+			Tachyon OPC+: MB-SRAF, OPC/FMO
+			Tachyon LMC
+		5. Process Window Control     : Focus monitoring and correction.    Pattern Matcher Full Chip w/ FlexRay
+			LithoTuner: cASCAL PMFC
+			D4C, PFC
+		6. Process window detection
+	4.Modeling the physical processes：
+		GDS-II Design w/RET-OPC
+		Mask Model
+		Simulated Mask Image
+		Optics Model 
+		Simulated Aerial Image
+		Resist Model
+		Simulated Resist Contour
+		Etch Model
+		Simulated EtchContour
+			
+		Mask Writer
+		Reticle
+		Scanner
+		Resist Dev.
+			Resist Pattern
+			Etch device  Etched pattern
+	5.Accurate prediction based on limited calibration
+											Calibration       Required                  Prediction          Application
+		With limited gauges(量规).                         For real layouts.                             Model based OPC & verification
+		With limited process conditions.                   For entire process window.                    Process window aware model based OPC & verification
+		Single optical(光学) condition.                    For other optical conditions.                 Source & Mask Optimization (SMO)
+	6.Apply model Step-by-Step
+		Design: target polygons	
+		RET1: added SRAF's(亚分辨率辅助图形)
+		OPC: modified polygons
+		Mask image
+		Simulated aerial image :   模拟航空影像
+		Aerial image & contour
+		Resist image contour   : 
+	7.Tachyon Platform:    Tachyon HW    Tachyon Tflex (Linearity & Scalability = TFLEX)
+        FEM  	LMC    OPC+    SMO, FMO    Litho Tuner     EUV
+ACE
+ALHC      Automatic Lens Heating Control
+ASCAL     Application Specific CALibration(校准)
+AVX       Advanced Vector Extensions	
+BFI       Bright field inspection
+cASCAL    LithoTuner Computational ASCAL
+CTM       continuous tone mask、
+CD        Critical Dimension   关键尺寸
+Correction (=bias):        widthTable      spaceTable      biasTable
+CRMS      cluster resource management systems
+CV        correct value
+Dashboard 仪表板
+DDL
+D4C       Design for Control
+DOF       depth-of-focus 聚焦深度
+DPT
+DRO   Design rule optimization
+DRC   Design rule check 
+DNIR: Do Not Inspect Region (DNIR).
+DNIM: Do Not Inspect Marker (DNIM).
+EUV (Extreme UltraViolet) Lithography
+    EUV specific effects included in comp litho optimization:
+	    Flare (pattern/slit dep.)
+		HV print bias (shadowing effect)
+		Bossung shift and tilt (3D mask)
+		Pattern shift Non-telecentricity (impacting overlay)
+EBH               embedded boundary handling  嵌入边界处理
+EBI		E-beam inspection  电子约束检查
+Edge Error:       distance between printed edge on wafer and drawn edge.
+EPE               edge placement error  边缘放置误差
+FFS
+FEM               focus-energy matrix   曝光聚焦-能量矩阵
+FMO:              Tachyon Flexible Mask Optimization
+FlexWave:         Programmable wavefront aberrations(波前像差)
+GDS
+HVM   
+HW   
+ion                      离子
+IW: Inspection Window (IW).
+IR: Inspection Region (IR).
+IM: Inspection Marker (IM).
+IP 
+JIRA is a proprietary(专有的) issue tracking product, developed by Atlassian, used for bug tracking, issue tracking and project management. 
+
+Tachyon FEM+      accurate and predictive modeling            : 精确预测建模
+    1. Physical or physical motivated model form.
+    2. Dial-in machine data to reduce search dimension
+    3. Tuning model parameters to repeat sampling metrology
+    4. Verification
+Tachyon SMO       integrated platform for litho-design optimization : 光刻设计优化集成平台
+    Optimizes any one or combination of source(FlexRay), mask(Mask 3D), wavefront(FlexWave) and design(smartDRO)
+    Input:  Process info. (model)              Output:
+            Target design                      Source (pupil(瞳孔) shape)
+            Initial conditions                 Mask layout
+            Flow (SMO.xml)                     Process window analysis
+			                                   Design target (optional)
+                                               Wavefront (optional)
+
+
+
+
+
+Tachyon OPC+      enabling full chip mask optimization        : 启用全芯片掩码优化
+    Sources of variations(变异): Illumination Mask Resist Etch
+	Benefits:     Higher yield(产量), Better circuit performance, Adoption of smaller design rules
+Tachyon LMC       Lithograph Manufacturability Check.
+    industry leading full chip OPC verification : 确定Normal focus or defocus
+    1. Identify defects to be fixed before costly production
+    2. Map out process window for yield improvements
+	defects:
+		All angle bridging
+		All angle necking
+		Edge Placement error
+		Thru-PW C2C / MEEF
+		CDU / CDV         线宽均匀性 / 
+		Full chip CDU optimization
+		Image quality ILS, Imin, Imax
+		Line-end / end-cap
+		Poly-active short
+		Extra printing SRAF, side lobe
+		Contact enclosure
+		Contact area
+		Contact exclosure
+		Overlay analysis
+
+Tachyon NXE       accelerating EUV litho and OPC deployment   : 加速EUV光刻和OPC部署
+TAT Turn around time
+TMU
+tnp
+TPT          
+Lua table structure
+LMVS:        Local MVS 
+Mask illuminated  掩模照亮
+Release Cycle
+    Market research:      MRD  market requirement documentation
+	Product definition:   PRD  Product Requirement Document
+	Scope definition:          Limits the release scope(范围)
+	Code implementation:  FRD  Feature Requirement Document
+	SQA/PEG testing:           Test plan
+    Product release
+
+
+MPT
+MRC:         Mask Rule Check  
+module tables
+MB-SRAF
+MBOPC        Model based OPC
+            1. Edge dissection(分割)    
+			2. Model simulation to obtain contour
+			3. Move the edges
+			4. Model simulation again --> Adjust the amount of edge movement until satisfied
+			程序框架:
+			APPInit()   1. Initialization.
+			APPMain()   2. Dissection.
+			            3. Retargeting of control points.
+						4. Apply initial perturbation(摄动) per segment.
+						5. OPC loop: apply correction per segment based on current resist image 
+						   Intensity at control point and the slope(斜坡) estimated in previous iteration.
+						6. Correction Criteria(标准) Satisfied  -> Repeat step 5 until satisfied.
+MO tuning
+MVS:         Multi-variable Solver
+OAI          Off-axis illumination     离轴照明
+OPC          Optical Proximity Correction                光学邻近效应校正
+OPC algorithm: A recipe to correct input design to get the best achievable simulated fit.
+OPC Correction:
+    
+OPC Lua
+OPC+ recipe
+OPC+ Dissection
+        1. General Dissection
+		    DISSECT_TABLE:    runSegmentLength    cornerSegmentLength
+			cornerControlPoint*
+			
+        2. Projection Dissection
+S---A-------(a dissection point)C-----(a projection point)P-------(a dissection point)D---------------B---E
+			|<----------------ppsExtension--------------->|<-------ppsExtension------>|
+			|<-------------------------------dissection region----------------------->|
+			The number of to-be-applied dissected segments n = CD / runSegmentLength
+S---A--------------------------------------------C---P---D--------------------------------------------B---E
+	|ppsNumOfRunSegments(>= 2) * runSegmentLength|       |ppsNumOfRunSegments(>= 2) * runSegmentLength|
+		    makeSegmentByProjection: turn on/off projection-based dissection.
+			ppsSearchRange: 
+        3. Geometry dependent dissection
+    70      60      50    40                                                 50     55      60
+<-------><------><-----><----><---------><---------><---------><---------><-----><------><------->
+comer1Len      run1Len        |            remaining length              |      run2Len  comer2Len
+            Space: 间距
+			C2C distance:   对角间距
+        4. Model Based Dissection
+		    Dissects segments based upon RI (Resist Image intensity(强度)) values.
+		    The control points are located at those saddle points(鞍点), while the dissection points usually are allocated between them.
+Corner Retarget of control point:
+    retargetOption: 1, 2, 3, 4, and 5. Default is 1.		
+OPE         Optical Proximity/Process Errors
+OPE         Optical Proximity/Process Effect            光学邻近效应
+OPO
+optical lithography      光学光刻
+
+photosensitive coating   光敏涂层
+photo-lithography        光刻
+photoresist              光刻胶
+Optical lithography process  
+	Substrate preparation                                基材准备
+		Cleaning to remove contamination                 	清洁以去除污染
+		Dehydration bake to remove water                 	脱水烘烤除去水分
+		Adhesion promoters (HMDS)                        	粘附促进剂（HMDS）
+	Photoresist Coating                                  光刻胶涂层
+		Spin coating for well controlled thickness       	旋涂可控制良好的厚度
+		Remove edge beads                                	去除边缘珠子
+	Prebake (Post-Apply bake, PAB, softbake)             预烘烤（后烘烤，PAB，软烘烤）
+		Drying the photoresist                           	干燥光刻胶
+	Exposure                                             曝光
+		Imaging from mask to wafer                       	从掩模到晶圆的成像
+		Photo-chemical actions of photoresist            	光刻胶的光化学作用
+	PEB (Post Exposure Bake)                             PEB（曝光后烘烤）
+		Reduce standing wave effect                      	减少驻波效应
+		Chemical amply for CA resist                     	化学充分的CA抗蚀剂
+	Development                                          发展
+		Developed the exposed resist                     	开发出暴露的抗蚀剂
+		Aqueous (water-like) bases as developers         	含水（水状）碱作为显影剂
+	Metrology                                            度量衡学
+		CD measurement                                   	CD测量
+
+patch       碎片、小块土地
+PFC         Pattern Fidelity Control  模式保真度控制
+photoresist 光致抗蚀剂
+PMFC:       Pattern Matcher Full Chip
+Post OPC layout:          掩模数据
+PSM         phase-shift mask          具有相移的掩模
+PW          Process Window
+PWC:        Process Window Control
+PWE:        Process Window Enhancement 
+PWO:        Process Window 
+PW Solver
+    PW solver consider NC (nominal condition) and different off-conditions in PW, compromised for the best correction for all conditions. Output maybe not the best for NC, but better for other PW conditions.
+	PW solver will stay within your NC tolerance and try to improve process window by calculating from PW models!!
+	OPC strategies: 
+	    1. Nominal Condition OPC
+	    2. Process Window OPC: 
+			(1)EPE based PW solver: evaluates current correction result based on RI signal of segments.
+			(2)CD based (PWCD) PW solver: evaluates correction quality based on contour CD.
+RET     resolution enhancement techniques   分辨率增强技术
+RTS
+SRAF:   Sub-resolution assist features 亚分辨率辅助图形  == Scattering Bar(SBar)  散射条    == SB
+RBSRAF  Rule-based SRAF
+        sbPlacementTable: Type     Space      Number of SRAF     SB width    SP1   SP1    其余八项为0
+MBSRAF  Model-based SRAF
+        SGM (Sbar Guidance(导向) map) flow
+		    SGM parameter initialization   -->  sbSGMCreator -->
+			SGM map generation        ( Target pattern 、 Simulation layer、 PRE_OPC)
+			Extraction layer : SGM extraction
+			                   SGM cleanup
+			Extracted SRAF
+		SGM Map G is the gradient of the cost function J.
+	    SGM extraction flow:
+		    SGM image
+			Local extraction threshold(阈值) estimation
+			Ridge(山脊) point identification
+			    SGM map generation
+				SGM extraction
+				SGM cleanup
+			SRAF extraction and adjustment
+			Extracted SRAF
+		Basic MBSRAF Function
+		    SRAF/SRIF = sbSGMCreator (lib, target_layer, simul_layer, extraction_layer,sgm_options,lua_table)
+            in sgm_options table, user can specify SRAF or SRIF, protection_layer, sbSGMGenKey, etc.
+SRAM clip
+SVS:        Single variable solver
+SQA:        Software Quality Assurance    软件质量保证
+ QA         Quality Assurance             质量保证
+ QC         Quality Control               质量控制
+Spec        Specification                 规格说明
+TOP table
+TAC         Tachyon Application Center    
+yield       产量
+YieldStar   An ASML metrology system      计量系统
+Wafer SEM
+
+Layer formation:
+    oxidation(氧化), deposition(沉淀), metallization(金属化)
+	
+	

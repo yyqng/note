@@ -1,0 +1,7 @@
+file filename
+size filename.o
+objdump -h filename.o
+objdump -x filename.o
+objdump -s filename.o #hex
+objdump -d filename.o #反汇编
+

@@ -1,0 +1,158 @@
+第1章 深度学习简介
+    1.1 人工智能、机器学习与深度学习
+        机器学习领域：自然语言处理、计算机视觉、语音识别等
+        知识图库：WorNet、谷歌知识图库（基于Wikipedia）
+        特征提取：十分重要但也很困难
+        人工智能的一个重要手段是机器学习,深度学习是机器学习的一个分支
+        深度学习：基础特征自动提取，组合多层复杂特征，使权重学习变得更加简单有效。
+    1.2 深度学习的发展历程
+        (1) 早期神经网络模型和感知机模型：无法解决线性不可分问题、
+        (2) 循环神经网络、LSTM模型、支持向量机：超越了人工神经网络的精度
+        (3) 深度学习：在语音图像识别等领域突破了传统机器学习的瓶颈
+    1.3 深度学习的应用
+        (1) 计算机视觉:ILSVRC图像分类比赛(基于ImageNet)，现在几乎全部使用深度学习算法
+        (2) 语音识别:谷歌语音(深度学习的语音模型取代高斯模型)
+        (3) 自然语言处理:语料库(WordNet、ConceptNet、FrameNet：大致刻画自然语音中单词之间的关系)；单词向量(GloVe：从网上非标注文本中学习)；情感分析
+        (4) 人机博弈:DeepMind开发团队：AlphaGo(蒙特卡罗树搜索、估值网络、走棋网络)；星际争霸2
+        等等
+    1.4 深度学习工具和对比
+        DistBelief(Inception模型赢得ILSVRC图像分类比赛)
+        ->Tensorflow计算模型：通用性、计算速度快、支持的计算平台多、支持的深度学习算法更广、系统稳定性更高。
+        Tensorflow:RankBrain排序算法、DeepMind开发团队的深度学习算法研究的工具、
+        第一梯队：tensorflow/Keras
+        第二梯队：PyTorch/Theano/caffe/
+            
+
+第二章 TensorFlow环境搭建
+    2.1 TensorFlow的主要依赖包
+        2.1.1 Protocol Buffer:谷歌开发的处理结构化数据(拥有多种属性的数据)的工具，用于进行结构化数据的序列化和还原;通信协议gRPC的基础;类似的工具有XML和JSON，区别在于：
+            (a) 序列化之后的数据不是可读字符串，而是二进制流；
+            (b) 还原序列化时需要使用定义数据的格式(.proto文件)
+            (c) 数据量更小、解析速度更快
+        2.1.2 Bazel:谷歌开源的自动化构建工具,类似的工具有Makefile、Ant和Maven。Bazel的优势:速度、可伸缩性、灵活性以及对不同语言和平台的支持。
+            Bazel基本知识：
+            (a) 项目空间:可包含多个项目，为一个文件夹(项目根目录)；
+            (b) WORKSPACE文件(定义对外部资源的依赖关系，可为空)。
+            (b) BUILD文件：对python支持的编译方式：py_binary、py_library、py_test
+    2.2 TensorFlow的安装
+        2.2.1 使用Docker安装
+            tensorflow/tensorflow:0.9.0-devel-gpu
+            docker run -it -p 8888:8888 -p 6006:6006 cargo.caicloud.io/tensorflow/tensorflow:0.12.0
+            #8888:Jupyter服务器(网页版的代码编辑器)；6666：TensorBoard 
+            #运行支持GPU的docker镜像：需安装Nvidia驱动和nividia-docker
+            docker run -it -p 8888:8888 -p 6006:6006 cargo.caicloud.io/tensorflow/tensorflow:0.12.0-gpu
+
+        2.2.2 使用pip安装
+            pip：安装、管理python软件包的工具，可安装打包好的tensorflow及其依赖关系
+            yum -y install python-pip
+            ./bazel-0.4.5-installer-linux-x86_64.sh
+            pip install tensorflow-0.11.0rc1-cp27-none-linux_x86_64.whl
+        2.2.3 从源码编译安装
+            将tensorflow源代码编译成pip安装包
+            Ubuntu 14.04下的安装: JDK8->Bazel->
+            tensorflow依赖的其他工具包(python3-numpy、swig、python3-dev、python-wheel)->
+            Nvidia(计算能力大于3.0)的Cuda Toolkit(版本大于v7)和cuDNN(版本大于v2)->tensorflow
+            tensorflow的安装：
+            ./configure
+            bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package
+            bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+            pip install /tmp/tensorflow_pkg/tensorflow-1.1.0-py2-none-any.whl
+    2.3 TensorFlow的测试样例
+        支持C、C++和python三种语言，对python支持最全面
+
+
+
+第三章 TensorFlow入门
+    3.1 TensorFlow计算模型--计算图
+        3.1.1 计算图的概念
+            用于表达张量之间通过计算相互转化的计算模型：每个节点都是一个运算，每条边代表计算之间的依赖关系。
+        3.1.2 计算图的使用
+            隔离、管理张量和计算，整合程序中的资源；可通过集合管理一个图中不同的资源
+            g = tf.Graph()
+            with g.device('/gpu:0')
+                c = a + b
+    3.2 TensorFlow数据模型--张量
+        3.2.1 张量的概念
+            张量没有保存数字，而是对运算结果的引用，保存的是获得结果的计算过程
+            三个属性：名字(name)、维度(shape)、类型(type)
+        3.2.2 张量的使用
+            (1) 对中间计算结果的引用:提高代码可读性
+            (2) 获得计算结果
+            三个属性：名字(name)、维度(shape)、类型(type)
+    3.3 TensorFlow数据模型--会话
+        (1) 会话拥有并管理程序运行时的所有资源。计算完成后如果不关闭会话，可能导致资源泄露
+            sess = tf.Session()
+            sess.run(...)
+            sess.close()
+        (2) 通过上下文管理器使用会话，解决异常退出时资源释放的问题
+            with tf.Session() as sess:
+                    sess.run(...)#上下文退出时自动关闭会话
+        (3) 通过设定默认会话计算张量取值
+            sess = tf.Session()
+            #三种相同功能的命令使用方式
+            with sess.as_default():
+                print(result.eval)
+            print(sess.run(result))
+            print(result.eval(session=sess))
+        (4) 注册默认会话
+            sess = tf.InteractiveSession()
+            print(result.eval())
+            sess.close()
+        (5) 配置会话
+            config = tf.ConfigProto(allow_soft_placement = True,#默认值是False
+                                    log_device_placement = Ture)
+            sess1 = tf.InteractiveSession(config=config)
+            sess2 = tf.Session(config=config)
+            allow_soft_placement：允许CPU代替GPU进行运算，设置为True保证可移植性
+            log_device_placement：记录节点被安排到了哪个设备上
+    3.4 TensorFlow实现神经网络
+        3.4.1 TensorFlow游乐场及神经网络简介
+            通过浏览器训练神经网络并实现训练过程可视化的工具
+            输入层(特征向量)->隐藏层(神经网络)->输出层
+        3.4.2 前向传播算法
+            神经网络的最小单元：神经元。神经网络结构：不同神经元的连接结构。
+            全连接神经网络：相邻两层之间的任意两个节点都有连接
+            y=x*w1*w2
+        3.4.3 神经网络参数与Tensorflow变量
+            随机数生成函数： w1 = tf.Variable( tf.random_normal( [2,3] , stddev=2))
+            常数生成函数 :   w2 = tf.Variable( tf.zeros([2,2] ,int32 )
+            其他变量初始化： w3 = tf.Variable( w1.initialize_value() *2 )
+            变量声明函数tf.Variable()输出结果就是一个张量，变量是一种特殊的张量
+            随机数生成函数 -> Assign操作初始化变量w1 -> read操作 -> 乘法运算
+            GraphKeys.VARIABLES集合：包含所有变量，通过tf.all_variables可得
+            GraphKeys.TRAINABLE_VARIABLES集合：包含所有需要优化的参数，通过tf.trainable_variables可得
+            变量的类型不可变，维度可变，但是较少见：
+                tf.assign( w1, w2, validate_shape=Flase )
+        3.4.5 通过TensorFlow训练神经网络模型
+            设置神经网络参数的过程就是训练神经网络模型的过程
+            监督学习：在带标签的数据集上，模型给出的预测要尽量等于标签，通过调整神经网络中的参数，对训练数据进行拟合，使模型拥有对未知样本的预测能力。
+            神经网络优化最常用的算法：反向传播算法
+            batch(训练数据) -> 前向传播算法 -> 预测结果 -> 根据预测结果与标签的差距更新神经网络参数
+            一个batch(样例)的表达：x = tf.constant([[0.7,0.9]]) -> 每次迭代都生成一个常量，在计算图中生成一个节点
+                                ->导致计算图很大，利用率低 -> 使用placehoder机制用于提供输入数据
+            placehoder:定义了一个位置，在程序运行时指定，无需再生成大量常量。位置上数据类型需指定，维度可通过自动推导获得
+                使用feed_dict给出每个用到的placehoder的取值
+            反向传播算法：定义损失函数，定义反向传播优化算法(常用的有tf.train.GradientDescent(Adam/Momentum)Optimizer)
+                        -> 对所有GraphKeys.TRAINABLE_VARIABELS集合中的变量进行优化 ->使得当前batch下损失函数更小
+            步骤总结：定义神经网络的结构和前向传播的结果、定义损失函数和选择反向传播优化算法、生成会话反复运行反向传播优化算法
+
+
+
+
+
+            
+
+
+
+            
+
+        
+
+
+        
+
+
+
+        
+
+

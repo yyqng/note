@@ -1,0 +1,7 @@
+确保安装winpacp
+	安装wireshark是会提示安装winpacp，选择安装
+
+以管理员身份运行cmd.exe
+
+输入命令：
+	net start npf

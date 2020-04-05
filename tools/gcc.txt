@@ -1,0 +1,9 @@
+export LD_LIBRARY_PATH=/home/yoyu/hub
+export LIBRARY_PATH=/home/yoyu/hub
+export C_INCLUDE_PATH=/home/yoyu/hub
+
+lua src/Makefile
+SYSLIBS="-Wl,-E -ldl -lreadline -lncurses"
+
+gcc hello.c -o hello.o
+gcc -fPIC -shared hello.c -o libhello.so
