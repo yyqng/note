@@ -1,0 +1,3 @@
+Find all c files and get the line numbers of each file. Then sort base on these line numbers.
+find . \( -iname '*.[sh]' -o -iname '*.h' \) -exec wc -l {} \; | sort -nr > cccc
+
