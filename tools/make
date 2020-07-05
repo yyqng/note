@@ -83,3 +83,17 @@ sumTime=$[ $endTime_s - $startTime_s ]
 echo -e "\033[41;36m $startTime ---> $endTime Totl:$sumTime s \033[0m"
 
 #cd /home/yoyu/doc/greplog; ./testgdb d; cd -
+
+
+mkdir -p /var/cache/swap/
+dd if=/dev/zero of=/var/cache/swap/swap0 bs=1M count=512
+chmod 0600 /var/cache/swap/swap0
+mkswap /var/cache/swap/swap0 
+swapon /var/cache/swap/swap0
+swapoff /var/cache/swap/swap0
+rm /var/cache/swap/swap0
+
+
+使得每次重启的时自动挂载swap文件
+修改 /etc/fstab 文件, 新增如下内容:
+/var/cache/swap/swap0    none    swap    sw      0 0
