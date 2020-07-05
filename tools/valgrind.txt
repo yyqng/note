@@ -1,0 +1,4 @@
+输入结果到文件valgrind_report.log中
+valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --run-libc-freeres=yes --log-file=./valgrind_report.log ./main  $@
+输入结果到屏幕
+valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --run-libc-freeres=yes ./main
