@@ -86,3 +86,21 @@ apt-get:
 			yum whatprovides libpng15.so.15
 		4.继而安装：
 			yum -y install libpng
+
+
+SCL
+yum install centos-release-scl scl-utils-build scl-utils
+yum list all --enablerepo='centos-sclo-rh'|grep gcc
+安装所有版本的gcc
+yum install devtoolset-3-gcc.x86_64 devtoolset-3-gcc-c++.x86_64 devtoolset-3-gcc-plugin-devel.x86_64 devtoolset-4-gcc.x86_64 devtoolset-4-gcc-c++.x86_64 devtoolset-4-gcc-gdb-plugin.x86_64 devtoolset-4-gcc-plugin-devel.x86_64 devtoolset-4-libccjit.x86_64 devtoolset-4-libgccjit-devel.x86_64 devtoolset-4-libgccjit-docs.x86_64 devtoolset-6-gcc.x86_64 devtoolset-6-gcc-cc.x86_64 devtoolset-6-gcc-gdb-plugin.x86_64 devtoolset-6-gcc-plugin-devel.x86_64 devtoolset-6-libgccjit.x86_64 devtoolset-6-libgccjit-devel.x86_64 devtoolset-6-libgccjit-docs.x86_64 devtoolset-7-gcc.x86_64 devtoolset-7-gcc-c++.x86_64 devtoolset-7-gcc-gdb-plugin.x86_64 devtoolset-7-gcc-plugin-devel.x86_64 devtoolset-7-libgccjit.x86_64 devtoolset-7-libgccjit-devel.x86_64 devtoolset-7-libgccjit-docs.x86_64 devtoolset-8-gcc.x86_64 devtoolset-8-gcc-c++.x86_64 devtoolset-8-gcc-gdb-plugin.x86_64 devtoolset-8-gcc-plugin-devel.x86_64 devtoolset-8-libgccjit.x86_64 devtoolset-8-libgccjit-devel.x86_64 devtoolset-8-libgccjit-docs.x86_64 gcc.x86_64 gcc-c++.x86_64 gcc-plugin-devel.x86_64 libgcc.i686 libgcc.x86_64
+查看SCL已安装的软件版本
+scl --list 或scl -l
+切换gcc的版本到gcc 8.*
+scl enable devtoolset-8 bash
+附：SCL的常用命令：
+
+1、scl --list 或scl -l
+2、scl --help 或 scl -h
+3、scl enable <scl-package-name> <command>  #使用scl来执行command命令
+4、scl enable  devtoolset-4 bash  #使用scl创建一个scl包的bash会话环境
+5、exit  #退出当前scl bash环境，恢复成系统bash环境
