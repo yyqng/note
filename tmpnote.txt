@@ -1,2 +1,5 @@
 pybind11教程 - 知乎专栏
 https://zhuanlan.zhihu.com/p/362834539
+
+pybind11 Documentation
+4.3 Creating bindings for a simple function
