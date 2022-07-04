@@ -22,7 +22,7 @@ syntax enable
 " 允许用指定语法高亮配色方案替换默认方案
 syntax on
 
-set viminfo='1000,<66
+set viminfo='1000,<6666
 "set viminfo=’1000
 set nocompatible "关闭兼容模式
 set incsearch "开启实时搜索功能
